@@ -299,19 +299,34 @@ export function BlastRadiusSimulator() {
 
   return (
     <div className="min-h-screen bg-[#0B0D11] text-slate-100 font-sans selection:bg-[#38BDF8]/20 selection:text-[#38BDF8]">
-      {/* Top Clinical Telemetry Bar */}
-      <header className="border-b border-[#222733] px-6 py-3 flex flex-wrap items-center justify-between gap-4 bg-[#0B0D11]">
-        <div className="flex items-center gap-4">
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-2xl tracking-tight text-white font-semibold">
-              AUDITGPT.AI
-            </span>
-            <span className="font-mono text-xs text-[#38BDF8]">
-              / DETERMINISTIC AGENT FIREWALL
-            </span>
-          </div>
-          <span className="hidden xl:inline-block font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 border border-[#222733] text-slate-400">
-            CI Gate &amp; Cryptographic Evidence Layer (Zero LLM Tokens)
+      {/* Top Header Bar with AuditGPT Shield Logo */}
+      <header className="border-b border-[#222733] px-5 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4 bg-[#0B0D11] sticky top-0 z-40 backdrop-blur">
+        <div className="flex items-center gap-3.5">
+          <a
+            href="https://auditgpt.ai"
+            className="flex items-center gap-3 group"
+            title="Return to AuditGPT.ai"
+          >
+            <div className="relative flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-[#111827] border border-[#222733] shadow-sm transition-transform group-hover:scale-105">
+              <img
+                src="/logo-shield.png"
+                alt="AuditGPT Shield Logo"
+                width={28}
+                height={28}
+                className="h-6 w-6 sm:h-7 sm:w-7 object-contain"
+              />
+            </div>
+            <div className="flex flex-col">
+              <div className="font-sans text-base sm:text-lg font-extrabold tracking-tight text-white leading-none">
+                AuditGPT<span className="text-slate-500 font-normal">.ai</span>
+              </div>
+              <div className="font-mono text-[9px] uppercase tracking-wider text-[#38BDF8] mt-0.5">
+                Blast-Radius Simulator
+              </div>
+            </div>
+          </a>
+          <span className="hidden md:inline-block font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 border border-[#222733] text-slate-400 bg-[#11141C]">
+            Powered by Receiptd (Ed25519) &amp; INFINI
           </span>
         </div>
 
@@ -339,6 +354,12 @@ export function BlastRadiusSimulator() {
               {activeReceipt ? `${activeReceipt.latencyMs}ms` : "0.00ms"}
             </span>
           </div>
+          <a
+            href="https://auditgpt.ai"
+            className="hidden sm:inline-block px-2 py-1 text-slate-300 hover:text-white hover:border-[#38BDF8] border border-[#222733] transition-colors"
+          >
+            &larr; auditgpt.ai
+          </a>
           <a
             href="https://github.com/NickAltstein/receiptd"
             target="_blank"
@@ -374,34 +395,6 @@ export function BlastRadiusSimulator() {
           </button>
         </div>
       </header>
-
-      {/* Hero Header Component */}
-      <div className="border-b border-[#222733] bg-[#0B0D11] px-6 py-6 sm:py-8">
-        <div className="max-w-[1720px] mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 font-mono text-xs px-2.5 py-1 border border-[#222733] bg-[#11141C] text-sky-400">
-            <span>AUDITGPT.AI</span>
-            <span className="text-slate-600">/</span>
-            <span className="text-slate-300">Powered by Receiptd</span>
-          </div>
-
-          <h1 className="font-serif text-3xl sm:text-5xl tracking-tight text-white max-w-3xl">
-            Cryptographic proof for every autonomous tool call.
-          </h1>
-
-          <p className="text-sm sm:text-base text-slate-400 max-w-2xl font-sans leading-relaxed">
-            Probabilistic LLM guardrails fail under prompt injection. <strong className="text-white font-normal">Receiptd</strong> enforces 0.02ms in-process policy checks (~67ms cold CLI hook) outside the model runtime, signing tamper-evident <code className="text-sky-300 font-mono text-xs px-1.5 py-0.5 bg-[#11141C] border border-[#222733]">Ed25519</code> receipts you can verify offline.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
-            <a href="#simulator" className="px-4 py-2 bg-sky-400 text-[#0B0D11] font-mono text-xs font-semibold uppercase tracking-wider hover:bg-sky-300 transition-colors">
-              Test Live Exploit &amp; Tamper Sandbox &darr;
-            </a>
-            <a href="https://github.com/NickAltstein/receiptd" target="_blank" rel="noopener noreferrer" className="px-4 py-2 border border-[#222733] bg-[#11141C] text-slate-200 font-mono text-xs hover:border-slate-600 transition-colors">
-              View GitHub (receiptd)
-            </a>
-          </div>
-        </div>
-      </div>
 
       {/* Main 3-Pane Split Grid */}
       <main id="simulator" className="grid grid-cols-12 min-h-[calc(100vh-53px)] divide-y lg:divide-y-0 lg:divide-x divide-[#222733]">
@@ -768,110 +761,27 @@ export function BlastRadiusSimulator() {
       </main>
 
       {/* Below-the-Fold Strip (2 Columns — Pre-Deployment CI Gate vs. Runtime Enforcement) */}
-      <footer className="border-t border-[#222733] bg-[#0B0D11] px-6 py-10">
-        <div className="max-w-[1720px] mx-auto">
-          <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-              <div className="font-mono text-xs text-[#38BDF8] uppercase tracking-wider mb-1">
-                THE OPEN-CORE TRIAD // ZERO-TRUST AGENT ARCHITECTURE
-              </div>
-              <h2 className="font-serif text-2xl text-white font-normal">
-                Pre-Deployment CI Replay &times; Runtime Deterministic Firewall
-              </h2>
-              <p className="text-xs text-slate-400 font-mono mt-1">
-                Pre-merge CI testing powered by AuditGPT &amp; INFINI. Production runtime evidence powered by Receiptd.
-              </p>
-            </div>
-            <div className="font-mono text-xs text-slate-400">
-              Zero Marketing Tiers · 100% Open Source Engineering
-            </div>
+      {/* Clean Minimal Footer */}
+      <footer className="border-t border-[#222733] bg-[#0B0D11] px-6 py-4">
+        <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-slate-500">
+          <div className="flex items-center gap-2">
+            <span>&copy; 2026 AuditGPT.ai</span>
+            <span>&bull;</span>
+            <span>Runtime Evidence: <a href="https://github.com/NickAltstein/receiptd" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">Receiptd</a></span>
+            <span>&bull;</span>
+            <span>Trace Replay: <a href="https://github.com/NickAltstein/infini" target="_blank" rel="noopener noreferrer" className="text-[#38BDF8] hover:underline">INFINI</a></span>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Column 1 — Pre-Merge CI Gate (INFINI) */}
-            <div className="p-5 border border-[#222733] bg-[#11141C] flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-semibold text-[#38BDF8] uppercase tracking-wider">
-                    1. Pre-Merge CI Gate — INFINI
-                  </span>
-                  <span className="font-mono text-[10px] text-slate-400 bg-[#0B0D11] px-2 py-0.5 border border-[#222733]">
-                    SQLite + FTS5
-                  </span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Eliminates Denial-of-Wallet loops and prompt-injection regressions in GitHub Actions before code merge. Evaluates pre-execution budget invariants and replay assertions without external dependencies.
-                </p>
-                <div className="bg-[#0B0D11] p-3 border border-[#222733] font-mono text-[11px] text-slate-300 leading-relaxed overflow-x-auto">
-                  <div className="text-slate-500 mb-1"># Loopfile.yaml — Denial-of-Wallet Circuit Breaker</div>
-                  <div><span className="text-[#38BDF8]">cycle_detection</span>:</div>
-                  <div>&nbsp;&nbsp;<span className="text-emerald-400">max_identical_tool_calls</span>: 2</div>
-                  <div>&nbsp;&nbsp;<span className="text-emerald-400">max_consecutive_tool_errors</span>: 3</div>
-                  <div><span className="text-[#38BDF8]">limits</span>:</div>
-                  <div>&nbsp;&nbsp;<span className="text-emerald-400">max_cost_usd</span>: 1.25</div>
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t border-[#222733] flex items-center justify-between">
-                <span className="font-mono text-[11px] text-slate-400">pip install infini-cli</span>
-                <a
-                  href="https://github.com/NickAltstein/infini"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-xs text-[#38BDF8] hover:underline flex items-center gap-1 font-semibold"
-                >
-                  GitHub: NickAltstein/infini &rarr;
-                </a>
-              </div>
-            </div>
-
-            {/* Column 2 — Runtime Enforcement (Receiptd) */}
-            <div className="p-5 border border-[#222733] bg-[#11141C] flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-                    2. Runtime Enforcement — Receiptd
-                  </span>
-                  <span className="font-mono text-[10px] text-slate-400 bg-[#0B0D11] px-2 py-0.5 border border-[#222733]">
-                    Ed25519 + Merkle
-                  </span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Deterministic, un-bypassable execution boundary for MCP and Claude Code. Evaluates proposed tool invocations in 0.02ms in-process (~67ms cold hook process), halts violations fail-closed with exit code 2, and signs offline-verifiable receipts.
-                </p>
-                <div className="bg-[#0B0D11] p-3 border border-[#222733] font-mono text-[11px] text-slate-300 leading-relaxed overflow-x-auto">
-                  <div className="text-slate-500 mb-1"># .claude/settings.json — PreToolUse Hard Hook</div>
-                  <div>&#123;</div>
-                  <div>&nbsp;&nbsp;<span className="text-[#38BDF8]">&quot;matcher&quot;</span>: <span className="text-emerald-400">&quot;Bash|Write|Edit|mcp__.*&quot;</span>,</div>
-                  <div>&nbsp;&nbsp;<span className="text-[#38BDF8]">&quot;hooks&quot;</span>: [&#123; <span className="text-slate-400">&quot;type&quot;</span>: <span className="text-emerald-400">&quot;command&quot;</span>, <span className="text-slate-400">&quot;command&quot;</span>: <span className="text-amber-300">&quot;python3 -m receiptd.hooks.claude_code_gate&quot;</span> &#125;]</div>
-                  <div>&#125;</div>
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t border-[#222733] flex items-center justify-between">
-                <span className="font-mono text-[11px] text-slate-400">pip install git+https://github.com/NickAltstein/receiptd &amp;&amp; receiptd init</span>
-                <a
-                  href="https://github.com/NickAltstein/receiptd"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-mono text-xs text-emerald-400 hover:underline flex items-center gap-1 font-semibold"
-                >
-                  GitHub: NickAltstein/receiptd &rarr;
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Sub-bar with Compliance & Legal */}
-          <div className="mt-8 pt-6 border-t border-[#222733] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-slate-500">
-            <div>&copy; 2026 AuditGPT Inc. &bull; Receiptd &bull; INFINI</div>
-            <div className="flex items-center gap-6">
-              <a href="/terms" className="hover:text-slate-300 transition-colors">
-                Terms of Service
-              </a>
-              <a href="/privacy" className="hover:text-slate-300 transition-colors">
-                Privacy Policy
-              </a>
-              <span className="text-emerald-400/80">Local-First · Zero Egress</span>
-            </div>
+          <div className="flex items-center gap-6">
+            <a href="https://auditgpt.ai" className="hover:text-slate-300 transition-colors">
+              &larr; Return to AuditGPT.ai
+            </a>
+            <a href="/terms" className="hover:text-slate-300 transition-colors">
+              Terms of Service
+            </a>
+            <a href="/privacy" className="hover:text-slate-300 transition-colors">
+              Privacy Policy
+            </a>
+            <span className="text-emerald-400/80">Local-First · Zero Data Egress</span>
           </div>
         </div>
       </footer>

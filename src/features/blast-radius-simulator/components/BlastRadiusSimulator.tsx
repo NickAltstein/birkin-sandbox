@@ -351,7 +351,7 @@ export function BlastRadiusSimulator() {
           <div className="flex items-center gap-1.5">
             <span className="text-[10px] text-slate-500 uppercase">Latency:</span>
             <span className="text-white font-semibold">
-              {activeReceipt ? `${activeReceipt.latencyMs}ms` : "0.00ms"}
+              {activeReceipt ? (activeReceipt.latencyMs > 0 ? `${activeReceipt.latencyMs}ms` : "<0.01ms") : "—"}
             </span>
           </div>
           <a
@@ -554,7 +554,7 @@ export function BlastRadiusSimulator() {
                 <Key className="w-3 h-3 text-[#38BDF8]" />
                 <span>Intercepted MCP JSON-RPC 2.0 Frame</span>
               </div>
-              <span className="font-mono text-[10px] text-slate-500">RFC-8785 Canonicalized</span>
+              <span className="font-mono text-[10px] text-slate-500">Canonical JSON</span>
             </div>
             <pre className="p-3.5 border border-[#222733] bg-[#11141C] font-mono text-xs text-[#38BDF8] overflow-x-auto max-h-56 leading-relaxed">
               {displayPayload}

@@ -11,7 +11,7 @@ Interactive, zero-trust execution sandbox demonstrating real-time deterministic 
 
 ## Key Features
 
-1. **Deterministic RFC-8785 (JCS) Serialization**:
+1. **Deterministic Canonical JSON Serialization**:
    Normalizes and lexicographically sorts object keys before computing SHA-256 digests, guaranteeing byte-level hash reproducibility across disparate runtimes.
 
 2. **Resilient WebCrypto Signer with Graceful Fallback**:

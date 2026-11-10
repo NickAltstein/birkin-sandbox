@@ -4,7 +4,7 @@ import { BlastRadiusSimulator } from "@/features/blast-radius-simulator";
 export const metadata: Metadata = {
   title: "AuditGPT — Cryptographic Proof for Every Autonomous Tool Call",
   description:
-    "Interactive adversarial MCP attack vector simulator, RFC-8785 deterministic canonicalization, WebCrypto Ed25519 execution receipts, and SHA-256 Merkle audit ledgers.",
+    "Interactive adversarial MCP attack vector simulator, Canonical JSON deterministic canonicalization, WebCrypto Ed25519 execution receipts, and SHA-256 Merkle audit ledgers.",
 };
 
 export default function RootPage() {

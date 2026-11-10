@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Birkin Blast-Radius Simulator | Zero-Trust Agent Interceptor",
+  title: "AuditGPT — Cryptographic Proof for Every Autonomous Tool Call",
   description:
-    "Interactive adversarial MCP attack vector simulator, RFC-8785 deterministic canonicalization, WebCrypto Ed25519 execution receipts, and SHA-256 Merkle audit ledgers.",
+    "Deterministic fail-closed PreToolUse runtime hooks, Ed25519 execution receipts, and pre-merge CI blast-radius gating for autonomous AI agents.",
 };
 
 export default function RootLayout({

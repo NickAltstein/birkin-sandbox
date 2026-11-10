@@ -191,7 +191,7 @@ export default function SandboxView({ homeHref }: { homeHref?: string }) {
           <div className={styles.headerMeta}>
             <div className={styles.badgeRow}>
               <span className={styles.badge}>
-                {signer ? signer.scheme : "SIGNER\u2026"}
+                {signer ? signer.scheme : "SIGNER…"}
               </span>
               <span
                 className={`${styles.badge} ${ledger ? (ledger.intact ? styles.ok : styles.bad) : ""}`}
@@ -207,7 +207,7 @@ export default function SandboxView({ homeHref }: { homeHref?: string }) {
 
         {ledger && !ledger.intact ? (
           <p className={styles.banner} role="status">
-            \u2717 TAMPER DETECTED \u2014 MERKLE ROOT & SIGNATURE MISMATCH
+            ✗ TAMPER DETECTED — MERKLE ROOT & SIGNATURE MISMATCH
           </p>
         ) : null}
 
@@ -264,7 +264,7 @@ export default function SandboxView({ homeHref }: { homeHref?: string }) {
             {frame && ledger ? (
               <>
                 <h2>
-                  {frame.title} \u00b7 {frame.tool}
+                  {frame.title} · {frame.tool}
                 </h2>
                 <div className={styles.badgeRow}>
                   <span
@@ -283,7 +283,7 @@ export default function SandboxView({ homeHref }: { homeHref?: string }) {
                 <p className={styles.effect}>{frame.effect}</p>
                 {frame.tamper ? (
                   <p className={styles.effect}>
-                    1-byte flip at {frame.tamper.path}: "{frame.tamper.before}" \u2192 "{frame.tamper.after}". The receipt was not re-signed.
+                    1-byte flip at {frame.tamper.path}: "{frame.tamper.before}" → "{frame.tamper.after}". The receipt was not re-signed.
                   </p>
                 ) : null}
                 <div className={styles.grid}>

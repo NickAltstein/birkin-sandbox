@@ -1,5 +1,6 @@
 {
-  "buildCommand": "bun x next build",
+  "installCommand": "bun install",
+  "buildCommand": "bun run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
   "cleanUrls": true,

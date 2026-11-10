@@ -1,6 +1,6 @@
-# Birkin Blast-Radius Simulator & Deterministic Interceptor
+# Receiptd Blast-Radius Simulator & Deterministic Interceptor
 
-[![Live Demo](https://img.shields.io/badge/live--demo-sandbox-38BDF8?style=flat-square)](https://birkin-sandbox.vercel.app)
+[![Live Demo](https://img.shields.io/badge/live--demo-sandbox-38BDF8?style=flat-square)](https://auditgpt.ai)
 [![Protocol](https://img.shields.io/badge/MCP-JSON--RPC%202.0-38BDF8?style=flat-square)](https://modelcontextprotocol.io)
 [![Cryptography](https://img.shields.io/badge/crypto-Ed25519%20%2B%20RFC--8785-0B0D11?style=flat-square)](#cryptographic-features)
 [![License: MIT](https://img.shields.io/badge/license-MIT-64748B?style=flat-square)](./LICENSE)

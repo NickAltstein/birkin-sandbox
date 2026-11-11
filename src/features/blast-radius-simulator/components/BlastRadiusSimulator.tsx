@@ -419,12 +419,12 @@ policies:
   return (
     <div className="min-h-screen bg-[#ebeff5] text-[#242426] font-sans selection:bg-[#9EFFA9] selection:text-[#111827]">
       {/* Top Floating Header Bar Aligned with AuditGPT Design System */}
-      <header className="sticky top-3 z-40 mx-auto max-w-[1720px] px-4 py-2">
+      <header className="sticky top-3 z-40 mx-auto max-w-7xl px-4 py-2">
         <nav className="flex items-center justify-between gap-4 rounded-full border border-slate-200/80 bg-white/95 px-5 py-2.5 shadow-xs backdrop-blur-md">
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-3.5 whitespace-nowrap shrink-0">
             <a
               href="https://auditgpt.ai"
-              className="flex items-center gap-3 group"
+              className="flex items-center gap-3 group whitespace-nowrap shrink-0"
               title="Return to AuditGPT.ai"
             >
               <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 border border-slate-200/80 shadow-2xs transition-transform group-hover:scale-105">
@@ -445,52 +445,14 @@ policies:
                 </div>
               </div>
             </a>
-            <span className="hidden md:inline-flex items-center rounded-full bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#475467]">
+            <span className="hidden xl:inline-flex items-center rounded-full bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#475467] whitespace-nowrap shrink-0">
               Receiptd (Ed25519) + INFINI
             </span>
           </div>
 
-          {/* Target Environment Selector & BYOK Badge */}
-          <div className="hidden xl:flex items-center gap-2 font-mono text-xs">
-            <div className="flex items-center gap-1 p-1 rounded-full border border-slate-200/80 bg-slate-50 text-[11px]">
-              {(
-                [
-                  { id: "DECENTRALIZED_NODE", label: "Decentralized Node" },
-                  { id: "BYOK_CLOUD", label: "BYOK (Zero-Egress)" },
-                  { id: "LOCAL_VPC", label: "Local / CI Runner" },
-                ] as const
-              ).map((env) => (
-                <button
-                  key={env.id}
-                  onClick={() => setEnvMode(env.id)}
-                  className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
-                    envMode === env.id
-                      ? "bg-[#111827] text-white font-semibold shadow-2xs"
-                      : "text-[#58718a] hover:text-[#111827]"
-                  }`}
-                >
-                  {env.label}
-                </button>
-              ))}
-            </div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467] text-[11px]">
-              BYOK KEYS: <span className="text-[#16a34a] font-semibold">LOCAL-HASHED</span>
-            </span>
-          </div>
-
-          {/* Center Badges */}
-          <div className="hidden lg:flex items-center gap-2 font-mono text-[11px]">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467]">
-              RUNTIME: <span className="text-[#16a34a] font-semibold">Receiptd (Ed25519 + Merkle)</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467]">
-              TRACE: <span className="text-[#58718a] font-semibold">INFINI traces</span>
-            </span>
-          </div>
-
           {/* Right Links & Exploit Deep-Link */}
-          <div className="flex items-center gap-3 sm:gap-4 font-mono text-xs text-[#667085]">
-            <div className="hidden md:flex items-center gap-1.5">
+          <div className="flex items-center gap-2.5 sm:gap-3 font-mono text-xs text-[#667085] whitespace-nowrap shrink-0">
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 whitespace-nowrap shrink-0">
               <span className="text-[10px] text-[#667085] uppercase">In-Browser Policy Check:</span>
               <span className="text-[#111827] font-semibold">
                 {formatLatency(activeReceipt?.latencyMs)}
@@ -498,20 +460,20 @@ policies:
             </div>
             <button
               onClick={() => setShowYamlModal(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-[#9EFFA9] text-[#111827] text-xs font-mono font-semibold border border-slate-200/80 transition-colors cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-[#9EFFA9] text-[#111827] text-xs font-mono font-semibold border border-slate-200/80 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               <FileCode className="w-3.5 h-3.5 text-[#58718a]" />
               <span>Export CI Gate YAML &rarr;</span>
             </button>
             <a
               href="https://auditgpt.ai"
-              className="hidden sm:inline-block px-3 py-1 rounded-full text-[#475467] hover:text-[#111827] hover:bg-slate-100 border border-slate-200/80 transition-colors"
+              className="hidden sm:inline-block px-3 py-1.5 rounded-full text-[#475467] hover:text-[#111827] hover:bg-slate-100 border border-slate-200/80 transition-colors text-xs font-mono whitespace-nowrap shrink-0"
             >
               &larr; auditgpt.ai
             </a>
             <button
               onClick={handleCopyLink}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#111827] text-white text-xs font-mono hover:bg-[#242426] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#111827] text-white text-xs font-mono hover:bg-[#242426] transition-colors cursor-pointer whitespace-nowrap shrink-0"
               title="Copy shareable exploit deep-link"
             >
               {copiedLink ? (
@@ -530,8 +492,52 @@ policies:
         </nav>
       </header>
 
+      {/* Sub-Header Context Bar: Target Environment Selector & BYOK Telemetry */}
+      <div className="mx-auto max-w-7xl px-4 pt-1 pb-1">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-xs px-4 py-2 font-mono text-xs shadow-2xs">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] uppercase tracking-wider text-[#667085] font-semibold whitespace-nowrap shrink-0">
+              Target Environment:
+            </span>
+            <div className="flex items-center gap-1 p-0.5 rounded-full border border-slate-200/80 bg-slate-50 text-[11px]">
+              {(
+                [
+                  { id: "DECENTRALIZED_NODE", label: "Decentralized Node" },
+                  { id: "BYOK_CLOUD", label: "BYOK (Zero-Egress)" },
+                  { id: "LOCAL_VPC", label: "Local / CI Runner" },
+                ] as const
+              ).map((env) => (
+                <button
+                  key={env.id}
+                  onClick={() => setEnvMode(env.id)}
+                  className={`px-3 py-1 rounded-full transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                    envMode === env.id
+                      ? "bg-[#111827] text-white font-semibold shadow-2xs"
+                      : "text-[#58718a] hover:text-[#111827]"
+                  }`}
+                >
+                  {env.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 text-[11px]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467] whitespace-nowrap shrink-0">
+              BYOK KEYS: <span className="text-[#16a34a] font-semibold">LOCAL-HASHED</span>
+            </span>
+            <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467] whitespace-nowrap shrink-0">
+              RUNTIME: <span className="text-[#16a34a] font-semibold">Receiptd (Ed25519 + Merkle)</span>
+            </span>
+            <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467] whitespace-nowrap shrink-0">
+              TRACE: <span className="text-[#58718a] font-semibold">INFINI traces</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Main 3-Pane Split Grid */}
-      <main id="simulator" className="max-w-[1720px] mx-auto p-4 sm:p-5 grid grid-cols-12 gap-5 items-start">
+      <main id="simulator" className="max-w-7xl mx-auto p-4 sm:p-5 grid grid-cols-12 gap-5 items-start">
         {/* PANE 1: ATTACK VECTOR & SCENARIO SELECTOR (3 Cols) */}
         <section className="col-span-12 lg:col-span-3 p-5 rounded-[1.25rem] border border-[rgba(36,36,38,0.08)] bg-white shadow-xs space-y-6 flex flex-col justify-between">
           <div className="space-y-6">
@@ -953,7 +959,7 @@ policies:
 
       {/* Clean Minimal Footer */}
       <footer className="border-t border-slate-200/80 bg-white/60 px-6 py-4 mt-8">
-        <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[#667085]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[#667085]">
           <div className="flex items-center gap-2">
             <span>&copy; 2026 AuditGPT.ai</span>
             <span>&bull;</span>

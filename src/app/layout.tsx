@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Fragment_Mono } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+});
+
+const fragmentMono = Fragment_Mono({
+  variable: "--font-fragment-mono",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -20,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased bg-[#ebeff5] text-[#242426]`}>
+      <body className={`${inter.variable} ${fragmentMono.variable} antialiased bg-[#ebeff5] text-[#242426]`}>
         {children}
       </body>
     </html>

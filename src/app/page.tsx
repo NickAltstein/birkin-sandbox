@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function RootPage() {
   return (
-    <main className="min-h-screen bg-[#ebeff5] text-[#242426] selection:bg-[#c8f135] selection:text-[#111827]">
+    <main className="min-h-screen bg-[#ebeff5] text-[#242426] selection:bg-[#9EFFA9] selection:text-[#111827]">
       <BlastRadiusSimulator />
     </main>
   );

@@ -417,7 +417,7 @@ policies:
   };
 
   return (
-    <div className="min-h-screen bg-[#ebeff5] text-[#242426] font-sans selection:bg-[#c8f135] selection:text-[#111827]">
+    <div className="min-h-screen bg-[#ebeff5] text-[#242426] font-sans selection:bg-[#9EFFA9] selection:text-[#111827]">
       {/* Top Floating Header Bar Aligned with AuditGPT Design System */}
       <header className="sticky top-3 z-40 mx-auto max-w-[1720px] px-4 py-2">
         <nav className="flex items-center justify-between gap-4 rounded-full border border-slate-200/80 bg-white/95 px-5 py-2.5 shadow-xs backdrop-blur-md">
@@ -498,7 +498,7 @@ policies:
             </div>
             <button
               onClick={() => setShowYamlModal(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-[#c8f135] text-[#111827] text-xs font-mono font-semibold border border-slate-200/80 transition-colors cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-[#9EFFA9] text-[#111827] text-xs font-mono font-semibold border border-slate-200/80 transition-colors cursor-pointer"
             >
               <FileCode className="w-3.5 h-3.5 text-[#58718a]" />
               <span>Export CI Gate YAML &rarr;</span>
@@ -516,8 +516,8 @@ policies:
             >
               {copiedLink ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-[#c8f135]" />
-                  <span className="text-[#c8f135] font-semibold">Copied!</span>
+                  <Check className="w-3.5 h-3.5 text-[#9EFFA9]" />
+                  <span className="text-[#9EFFA9] font-semibold">Copied!</span>
                 </>
               ) : (
                 <>
@@ -1021,7 +1021,7 @@ policies:
                   onClick={handleCopyYaml}
                   className="px-4 py-2 rounded-full font-mono text-xs font-bold bg-[#111827] text-white hover:bg-slate-800 transition-colors cursor-pointer flex items-center gap-1.5"
                 >
-                  {copiedYaml ? <Check className="w-3.5 h-3.5 text-[#c8f135]" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedYaml ? <Check className="w-3.5 h-3.5 text-[#9EFFA9]" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedYaml ? "Copied!" : "Copy YAML Config"}</span>
                 </button>
               </div>

@@ -421,26 +421,17 @@ policies:
           <div className="flex items-center gap-3.5 whitespace-nowrap shrink-0">
             <a
               href="https://auditgpt.ai"
-              className="flex items-center gap-3 group whitespace-nowrap shrink-0"
-              title="Return to AuditGPT.ai"
+              className="flex shrink-0 items-center gap-[6px] whitespace-nowrap text-[#0b100d]"
+              aria-label="AuditGPT home"
             >
-              <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 border border-slate-200/80 shadow-2xs transition-transform group-hover:scale-105">
-                <img
-                  src="/logo-shield.png"
-                  alt="AuditGPT Shield Logo"
-                  width={24}
-                  height={24}
-                  className="h-6 w-6 rounded-full object-contain"
-                />
-              </div>
-              <div className="flex flex-col leading-none">
-                <div className="font-sans text-base font-extrabold tracking-[-0.025em] text-[#111827]">
-                  AuditGPT<span className="text-slate-400 font-normal">.ai</span>
-                </div>
-                <div className="font-mono text-[9px] uppercase tracking-wider text-[#58718a] mt-0.5">
-                  Blast-Radius Simulator
-                </div>
-              </div>
+              <img
+                src="/logo-shield-pale-outline.png"
+                alt=""
+                width={44}
+                height={47}
+                className="h-auto w-8 shrink-0 sm:w-11"
+              />
+              <span className="text-xl font-extrabold tracking-[-0.055em] sm:text-[25px]">AuditGPT</span>
             </a>
             <span className="hidden xl:inline-flex items-center rounded-full bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#475467] whitespace-nowrap shrink-0">
               Receiptd policy simulation

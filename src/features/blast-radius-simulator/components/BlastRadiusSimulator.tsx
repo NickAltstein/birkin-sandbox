@@ -27,6 +27,8 @@ import {
   GitBranch,
   Sliders,
   Bug,
+  FileCode,
+  X,
 } from "lucide-react";
 
 export function BlastRadiusSimulator() {
@@ -41,6 +43,36 @@ export function BlastRadiusSimulator() {
   const [verifyReason, setVerifyReason] = useState<string>("");
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [forkedSteps, setForkedSteps] = useState<MCPToolCall[] | null>(null);
+
+  // New Elis AI Pitch Capabilities: Custom Frame, BYOK Context, CI Gate Exporter
+  const [isCustomMode, setIsCustomMode] = useState<boolean>(false);
+  const [customToolName, setCustomToolName] = useState<string>("elis_node.execute_tx");
+  const [customToolArgs, setCustomToolArgs] = useState<string>(
+    '{\n  "query": "DROP TABLE elis_vault_keys CASCADE;",\n  "env": ".env"\n}'
+  );
+  const [envMode, setEnvMode] = useState<"DECENTRALIZED_NODE" | "BYOK_CLOUD" | "LOCAL_VPC">(
+    "DECENTRALIZED_NODE"
+  );
+  const [showYamlModal, setShowYamlModal] = useState<boolean>(false);
+  const [copiedYaml, setCopiedYaml] = useState<boolean>(false);
+
+  const customStep: MCPToolCall = useMemo(() => {
+    let parsedArgs: Record<string, unknown> = {};
+    try {
+      parsedArgs = JSON.parse(customToolArgs);
+    } catch {
+      parsedArgs = { raw_payload: customToolArgs };
+    }
+    return {
+      jsonrpc: "2.0",
+      id: "req-custom-01",
+      method: "tools/call",
+      params: {
+        name: customToolName,
+        arguments: parsedArgs,
+      },
+    };
+  }, [customToolName, customToolArgs]);
 
   const selectedScenario = useMemo(() => {
     return (
@@ -172,15 +204,20 @@ export function BlastRadiusSimulator() {
     [signerCtx, selectedScenarioId, syncUrlParams]
   );
 
-  // Re-run trace on scenario, policies, or signer context change
+  // Re-run trace on scenario, policies, custom mode, or signer context change
   useEffect(() => {
     if (!signerCtx) return;
-    const stepsToRun = forkedSteps ?? selectedScenario.steps;
-    runTrace(stepsToRun, policies, isTampered, activeStepIdx);
-  }, [signerCtx, selectedScenario, policies, forkedSteps, runTrace]);
+    if (isCustomMode) {
+      runTrace([customStep], policies, isTampered, 0);
+    } else {
+      const stepsToRun = forkedSteps ?? selectedScenario.steps;
+      runTrace(stepsToRun, policies, isTampered, activeStepIdx);
+    }
+  }, [signerCtx, isCustomMode, customStep, selectedScenario, policies, forkedSteps, runTrace]);
 
   // 5. Scenario Switcher
   const handleSelectScenario = (scen: ExploitScenario) => {
+    setIsCustomMode(false);
     setSelectedScenarioId(scen.id);
     setForkedSteps(null);
     setIsTampered(false);
@@ -190,6 +227,15 @@ export function BlastRadiusSimulator() {
     const lastStep = steps.length - 1;
     setActiveStepIdx(lastStep);
     syncUrlParams(scen.id, lastStep, false, policies);
+  };
+
+  const handleSelectCustomMode = () => {
+    setIsCustomMode(true);
+    setForkedSteps(null);
+    setIsTampered(false);
+    setActiveStepIdx(0);
+    setVerifyStatus("IDLE");
+    setVerifyReason("");
   };
 
   // 6. Policy Toggle Handler
@@ -298,6 +344,78 @@ export function BlastRadiusSimulator() {
     return JSON.stringify(clone, null, 2);
   }, [activeReceipt, isTampered]);
 
+  // Highlight hazardous AST substrings inside JSON-RPC viewer
+  const renderHighlightedPayload = useCallback((rawJson: string) => {
+    const hazardousTokens = [
+      "DROP TABLE",
+      "CASCADE",
+      "TRUNCATE",
+      "DELETE FROM",
+      ".env",
+      "curl",
+      "UNBOUNDED",
+      "rm -rf",
+      "admin_override",
+      "cat .env",
+    ];
+
+    const regex = new RegExp(
+      `(${hazardousTokens.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`,
+      "gi"
+    );
+    const parts = rawJson.split(regex);
+
+    return (
+      <code>
+        {parts.map((part, idx) => {
+          const isHazardous = hazardousTokens.some(
+            (t) => t.toLowerCase() === part.toLowerCase()
+          );
+          if (isHazardous) {
+            return (
+              <mark
+                key={idx}
+                className="bg-rose-500/20 text-[#e05243] font-bold px-1 py-0.5 rounded border border-rose-300 font-mono inline-block animate-pulse"
+              >
+                {part}
+              </mark>
+            );
+          }
+          return <span key={idx}>{part}</span>;
+        })}
+      </code>
+    );
+  }, []);
+
+  const generatedYaml = useMemo(() => {
+    const pol01 = policies.find((p) => p.id === "POL-01")?.enabled ?? true;
+    const pol02 = policies.find((p) => p.id === "POL-02")?.enabled ?? true;
+    const pol03 = policies.find((p) => p.id === "POL-03")?.enabled ?? true;
+
+    return `version: "1.2"
+environment: "${envMode}"
+crypto_receipts:
+  signing: "ed25519"
+  merkle_ledger: true
+  byok_zero_egress: true
+
+bounds:
+  max_cost_per_task_usd: 0.15
+  max_subagent_depth: 3
+
+policies:
+  POL-01_NO_ENV_EXFILTRATION: ${pol01}
+  POL-02_NO_DESTRUCTIVE_DDL: ${pol02}
+  POL-03_NO_RECURSIVE_SPAWN: ${pol03}`;
+  }, [envMode, policies]);
+
+  const handleCopyYaml = () => {
+    if (typeof window === "undefined") return;
+    navigator.clipboard.writeText(generatedYaml);
+    setCopiedYaml(true);
+    setTimeout(() => setCopiedYaml(false), 2000);
+  };
+
   return (
     <div className="min-h-screen bg-[#ebeff5] text-[#242426] font-sans selection:bg-[#c8f135] selection:text-[#111827]">
       {/* Top Floating Header Bar Aligned with AuditGPT Design System */}
@@ -332,6 +450,34 @@ export function BlastRadiusSimulator() {
             </span>
           </div>
 
+          {/* Target Environment Selector & BYOK Badge */}
+          <div className="hidden xl:flex items-center gap-2 font-mono text-xs">
+            <div className="flex items-center gap-1 p-1 rounded-full border border-slate-200/80 bg-slate-50 text-[11px]">
+              {(
+                [
+                  { id: "DECENTRALIZED_NODE", label: "Decentralized Node" },
+                  { id: "BYOK_CLOUD", label: "BYOK (Zero-Egress)" },
+                  { id: "LOCAL_VPC", label: "Local / CI Runner" },
+                ] as const
+              ).map((env) => (
+                <button
+                  key={env.id}
+                  onClick={() => setEnvMode(env.id)}
+                  className={`px-3 py-1 rounded-full transition-all cursor-pointer ${
+                    envMode === env.id
+                      ? "bg-[#111827] text-white font-semibold shadow-2xs"
+                      : "text-[#58718a] hover:text-[#111827]"
+                  }`}
+                >
+                  {env.label}
+                </button>
+              ))}
+            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467] text-[11px]">
+              BYOK KEYS: <span className="text-[#16a34a] font-semibold">LOCAL-HASHED</span>
+            </span>
+          </div>
+
           {/* Center Badges */}
           <div className="hidden lg:flex items-center gap-2 font-mono text-[11px]">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467]">
@@ -345,17 +491,18 @@ export function BlastRadiusSimulator() {
           {/* Right Links & Exploit Deep-Link */}
           <div className="flex items-center gap-3 sm:gap-4 font-mono text-xs text-[#667085]">
             <div className="hidden md:flex items-center gap-1.5">
-              <span className="text-[10px] text-[#667085] uppercase">Signing:</span>
-              <span className="text-[#58718a] font-semibold">
-                {signerCtx ? signerCtx.scheme : "WebCrypto..."}
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
               <span className="text-[10px] text-[#667085] uppercase">In-Browser Policy Check:</span>
               <span className="text-[#111827] font-semibold">
                 {formatLatency(activeReceipt?.latencyMs)}
               </span>
             </div>
+            <button
+              onClick={() => setShowYamlModal(true)}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-[#c8f135] text-[#111827] text-xs font-mono font-semibold border border-slate-200/80 transition-colors cursor-pointer"
+            >
+              <FileCode className="w-3.5 h-3.5 text-[#58718a]" />
+              <span>Export CI Gate YAML &rarr;</span>
+            </button>
             <a
               href="https://auditgpt.ai"
               className="hidden sm:inline-block px-3 py-1 rounded-full text-[#475467] hover:text-[#111827] hover:bg-slate-100 border border-slate-200/80 transition-colors"
@@ -395,12 +542,12 @@ export function BlastRadiusSimulator() {
               </div>
               <div className="space-y-2">
                 {EXPLOIT_SCENARIOS.map((scen) => {
-                  const isSelected = scen.id === selectedScenario.id;
+                  const isSelected = !isCustomMode && scen.id === selectedScenario.id;
                   return (
                     <button
                       key={scen.id}
                       onClick={() => handleSelectScenario(scen)}
-                      className={`w-full text-left p-3.5 rounded-xl border transition-all ${
+                      className={`w-full text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
                         isSelected
                           ? "border-[#58718a] bg-slate-50 ring-1 ring-[#58718a]/30"
                           : "border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50"
@@ -419,6 +566,28 @@ export function BlastRadiusSimulator() {
                     </button>
                   );
                 })}
+
+                {/* Custom BYOK / MCP Payload Option */}
+                <button
+                  type="button"
+                  onClick={handleSelectCustomMode}
+                  className={`w-full text-left p-3.5 rounded-xl border transition-all cursor-pointer ${
+                    isCustomMode
+                      ? "border-[#58718a] bg-slate-50 ring-1 ring-[#58718a]/30"
+                      : "border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                  }`}
+                >
+                  <div className="flex items-center justify-between font-mono text-[10px] mb-1">
+                    <span className="text-[#58718a] font-semibold">CUSTOM-RPC</span>
+                    <span className="text-sky-600 font-medium font-mono">Bring Your Own Tool Call</span>
+                  </div>
+                  <div className="font-sans font-bold text-xs text-[#111827] mb-1 tracking-tight">
+                    Custom MCP JSON-RPC Frame
+                  </div>
+                  <p className="text-[11px] text-[#475467] leading-relaxed line-clamp-2">
+                    Paste custom MCP tool schemas or SQL/Shell payloads to test live AST scoring and real WebCrypto signing.
+                  </p>
+                </button>
               </div>
             </div>
 
@@ -534,6 +703,34 @@ export function BlastRadiusSimulator() {
             </div>
           )}
 
+          {/* Custom Tool Call Injector (Active when CUSTOM-RPC is selected) */}
+          {isCustomMode && (
+            <div className="p-4 rounded-xl border border-sky-300 bg-sky-50/50 space-y-2.5 font-mono text-xs">
+              <div className="flex items-center justify-between text-[#111827] font-semibold text-[11px]">
+                <span className="flex items-center gap-1.5 text-sky-800">
+                  <Terminal className="w-3.5 h-3.5 text-sky-600" />
+                  Live AST Payload Injector (Bring Your Own Tool Call):
+                </span>
+                <span className="text-[10px] text-sky-700 font-medium">Real-Time WebCrypto Eval</span>
+              </div>
+              <input
+                type="text"
+                value={customToolName}
+                onChange={(e) => setCustomToolName(e.target.value)}
+                placeholder="Tool name (e.g. elis_node.execute_tx)"
+                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-mono text-[#111827] focus:outline-none focus:ring-1 focus:ring-sky-500"
+              />
+              <textarea
+                rows={3}
+                value={customToolArgs}
+                onChange={(e) => setCustomToolArgs(e.target.value)}
+                placeholder='JSON arguments (e.g. {"query": "DROP TABLE keys;"})'
+                className="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-xs font-mono text-[#111827] focus:outline-none focus:ring-1 focus:ring-sky-500 leading-relaxed"
+                spellCheck={false}
+              />
+            </div>
+          )}
+
           {/* Raw MCP JSON-RPC Payload Inspector */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -541,10 +738,10 @@ export function BlastRadiusSimulator() {
                 <Key className="w-3 h-3 text-[#58718a]" />
                 <span>Intercepted MCP JSON-RPC 2.0 Frame</span>
               </div>
-              <span className="font-mono text-[10px] text-[#667085]">Canonical JSON</span>
+              <span className="font-mono text-[10px] text-[#667085]">Canonical JSON &bull; AST Token Highlight</span>
             </div>
             <pre className="p-3.5 rounded-xl border border-slate-200/80 bg-[#f8fafc] font-mono text-xs text-[#242426] overflow-x-auto max-h-56 leading-relaxed">
-              {displayPayload}
+              {renderHighlightedPayload(displayPayload)}
             </pre>
           </div>
 
@@ -556,6 +753,13 @@ export function BlastRadiusSimulator() {
                   Cryptographic Execution Receipt
                 </span>
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowYamlModal(true)}
+                    className="px-2.5 py-1 rounded-full border border-slate-300 text-[10px] font-mono text-[#111827] bg-white hover:bg-slate-50 transition-colors flex items-center gap-1 cursor-pointer"
+                  >
+                    <FileCode className="w-3 h-3 text-[#58718a]" />
+                    <span>Export CI YAML</span>
+                  </button>
                   <button
                     onClick={handleToggleTamper}
                     className={`px-2.5 py-1 rounded-full border text-[10px] font-mono transition-colors flex items-center gap-1 cursor-pointer ${
@@ -771,6 +975,60 @@ export function BlastRadiusSimulator() {
           </div>
         </div>
       </footer>
+
+      {/* 1-Click Export CI Gate YAML Modal */}
+      {showYamlModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setShowYamlModal(false)}
+        >
+          <div
+            className="bg-white border border-slate-300 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div className="flex items-center gap-2 font-mono text-sm font-bold text-[#111827]">
+                <FileCode className="w-4 h-4 text-[#58718a]" />
+                <span>auditgpt.config.yaml &bull; Live Merge Gate</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowYamlModal(false)}
+                className="text-slate-400 hover:text-[#111827] text-sm font-mono cursor-pointer p-1"
+                aria-label="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <p className="text-xs text-[#475467] leading-relaxed">
+              This configuration enforces the exact policy gates tested in the simulator (AST Fail-Closed) across your GitHub Actions PR pipeline and local developer hooks.
+            </p>
+
+            <pre className="bg-[#f8fafc] p-4 rounded-xl border border-slate-200 text-xs font-mono text-[#242426] overflow-x-auto leading-relaxed">
+              {generatedYaml}
+            </pre>
+
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-[11px] font-mono text-[#16a34a] font-medium">
+                ✓ Generated from active Section 02 toggles
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyYaml}
+                  className="px-4 py-2 rounded-full font-mono text-xs font-bold bg-[#111827] text-white hover:bg-slate-800 transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  {copiedYaml ? <Check className="w-3.5 h-3.5 text-[#c8f135]" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedYaml ? "Copied!" : "Copy YAML Config"}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

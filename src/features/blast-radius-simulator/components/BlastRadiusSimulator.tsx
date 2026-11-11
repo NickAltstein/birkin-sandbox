@@ -299,112 +299,98 @@ export function BlastRadiusSimulator() {
   }, [activeReceipt, isTampered]);
 
   return (
-    <div className="min-h-screen bg-[#0B0D11] text-slate-100 font-sans selection:bg-[#38BDF8]/20 selection:text-[#38BDF8]">
-      {/* Top Header Bar with AuditGPT Shield Logo */}
-      <header className="border-b border-[#222733] px-5 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4 bg-[#0B0D11] sticky top-0 z-40 backdrop-blur">
-        <div className="flex items-center gap-3.5">
-          <a
-            href="https://auditgpt.ai"
-            className="flex items-center gap-3 group"
-            title="Return to AuditGPT.ai"
-          >
-            <div className="relative flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-[#111827] border border-[#222733] shadow-sm transition-transform group-hover:scale-105">
-              <img
-                src="/logo-shield.png"
-                alt="AuditGPT Shield Logo"
-                width={28}
-                height={28}
-                className="h-6 w-6 sm:h-7 sm:w-7 object-contain"
-              />
-            </div>
-            <div className="flex flex-col">
-              <div className="font-sans text-base sm:text-lg font-extrabold tracking-tight text-white leading-none">
-                AuditGPT<span className="text-slate-500 font-normal">.ai</span>
+    <div className="min-h-screen bg-[#ebeff5] text-[#242426] font-sans selection:bg-[#c8f135] selection:text-[#111827]">
+      {/* Top Floating Header Bar Aligned with AuditGPT Design System */}
+      <header className="sticky top-3 z-40 mx-auto max-w-[1720px] px-4 py-2">
+        <nav className="flex items-center justify-between gap-4 rounded-full border border-slate-200/80 bg-white/95 px-5 py-2.5 shadow-xs backdrop-blur-md">
+          <div className="flex items-center gap-3.5">
+            <a
+              href="https://auditgpt.ai"
+              className="flex items-center gap-3 group"
+              title="Return to AuditGPT.ai"
+            >
+              <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 border border-slate-200/80 shadow-2xs transition-transform group-hover:scale-105">
+                <img
+                  src="/logo-shield.png"
+                  alt="AuditGPT Shield Logo"
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 rounded-full object-contain"
+                />
               </div>
-              <div className="font-mono text-[9px] uppercase tracking-wider text-[#38BDF8] mt-0.5">
-                Blast-Radius Simulator
+              <div className="flex flex-col leading-none">
+                <div className="font-sans text-base font-extrabold tracking-[-0.025em] text-[#111827]">
+                  AuditGPT<span className="text-slate-400 font-normal">.ai</span>
+                </div>
+                <div className="font-mono text-[9px] uppercase tracking-wider text-[#58718a] mt-0.5">
+                  Blast-Radius Simulator
+                </div>
               </div>
-            </div>
-          </a>
-          <span className="hidden md:inline-block font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 border border-[#222733] text-slate-400 bg-[#11141C]">
-            Powered by Receiptd (Ed25519) &amp; INFINI
-          </span>
-        </div>
-
-        {/* Center Badges */}
-        <div className="hidden lg:flex items-center gap-2 font-mono text-[11px]">
-          <span className="px-2.5 py-1 bg-[#11141C] border border-[#222733] text-slate-300">
-            RUNTIME: <span className="text-emerald-400 font-semibold">Receiptd (Ed25519 + Merkle)</span>
-          </span>
-          <span className="px-2.5 py-1 bg-[#11141C] border border-[#222733] text-slate-300">
-            TRACE: <span className="text-[#38BDF8] font-semibold">INFINI traces</span>
-          </span>
-        </div>
-
-        {/* Right Links & Exploit Deep-Link */}
-        <div className="flex items-center gap-3 sm:gap-4 font-mono text-xs text-slate-400">
-          <div className="hidden md:flex items-center gap-1.5">
-            <span className="text-[10px] text-slate-500 uppercase">Signing:</span>
-            <span className="text-[#38BDF8] font-semibold">
-              {signerCtx ? signerCtx.scheme : "WebCrypto..."}
+            </a>
+            <span className="hidden md:inline-flex items-center rounded-full bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#475467]">
+              Receiptd (Ed25519) + INFINI
             </span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-[10px] text-slate-500 uppercase">In-Browser Policy Check:</span>
-            <span className="text-white font-semibold">
-              {formatLatency(activeReceipt?.latencyMs)}
+
+          {/* Center Badges */}
+          <div className="hidden lg:flex items-center gap-2 font-mono text-[11px]">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467]">
+              RUNTIME: <span className="text-[#16a34a] font-semibold">Receiptd (Ed25519 + Merkle)</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467]">
+              TRACE: <span className="text-[#58718a] font-semibold">INFINI traces</span>
             </span>
           </div>
-          <a
-            href="https://auditgpt.ai"
-            className="hidden sm:inline-block px-2 py-1 text-slate-300 hover:text-white hover:border-[#38BDF8] border border-[#222733] transition-colors"
-          >
-            &larr; auditgpt.ai
-          </a>
-          <a
-            href="https://github.com/NickAltstein/receiptd"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-block px-2 py-1 text-slate-300 hover:text-white hover:border-[#38BDF8] border border-[#222733] transition-colors"
-          >
-            GitHub: receiptd
-          </a>
-          <a
-            href="https://github.com/NickAltstein/infini"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-block px-2 py-1 text-slate-300 hover:text-white hover:border-[#38BDF8] border border-[#222733] transition-colors"
-          >
-            GitHub: INFINI
-          </a>
-          <button
-            onClick={handleCopyLink}
-            className="flex items-center gap-1 px-2.5 py-1 border border-[#38BDF8]/40 bg-[#38BDF8]/10 text-xs font-mono text-[#38BDF8] hover:bg-[#38BDF8]/20 transition-colors cursor-pointer"
-            title="Copy shareable exploit deep-link"
-          >
-            {copiedLink ? (
-              <>
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-3.5 h-3.5 text-[#38BDF8]" />
-                <span>Copy Exploit Deep-Link</span>
-              </>
-            )}
-          </button>
-        </div>
+
+          {/* Right Links & Exploit Deep-Link */}
+          <div className="flex items-center gap-3 sm:gap-4 font-mono text-xs text-[#667085]">
+            <div className="hidden md:flex items-center gap-1.5">
+              <span className="text-[10px] text-[#667085] uppercase">Signing:</span>
+              <span className="text-[#58718a] font-semibold">
+                {signerCtx ? signerCtx.scheme : "WebCrypto..."}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-[#667085] uppercase">In-Browser Policy Check:</span>
+              <span className="text-[#111827] font-semibold">
+                {formatLatency(activeReceipt?.latencyMs)}
+              </span>
+            </div>
+            <a
+              href="https://auditgpt.ai"
+              className="hidden sm:inline-block px-3 py-1 rounded-full text-[#475467] hover:text-[#111827] hover:bg-slate-100 border border-slate-200/80 transition-colors"
+            >
+              &larr; auditgpt.ai
+            </a>
+            <button
+              onClick={handleCopyLink}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#111827] text-white text-xs font-mono hover:bg-[#242426] transition-colors cursor-pointer"
+              title="Copy shareable exploit deep-link"
+            >
+              {copiedLink ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-[#c8f135]" />
+                  <span className="text-[#c8f135] font-semibold">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5 text-slate-300" />
+                  <span>Copy Deep-Link</span>
+                </>
+              )}
+            </button>
+          </div>
+        </nav>
       </header>
 
       {/* Main 3-Pane Split Grid */}
-      <main id="simulator" className="grid grid-cols-12 min-h-[calc(100vh-53px)] divide-y lg:divide-y-0 lg:divide-x divide-[#222733]">
+      <main id="simulator" className="max-w-[1720px] mx-auto p-4 sm:p-5 grid grid-cols-12 gap-5 items-start">
         {/* PANE 1: ATTACK VECTOR & SCENARIO SELECTOR (3 Cols) */}
-        <section className="col-span-12 lg:col-span-3 p-5 flex flex-col justify-between bg-[#0B0D11] space-y-6">
+        <section className="col-span-12 lg:col-span-3 p-5 rounded-[1.25rem] border border-[rgba(36,36,38,0.08)] bg-white shadow-xs space-y-6 flex flex-col justify-between">
           <div className="space-y-6">
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
-                <Terminal className="w-3.5 h-3.5 text-[#38BDF8]" />
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#667085] mb-2.5 flex items-center gap-1.5">
+                <Terminal className="w-3.5 h-3.5 text-[#58718a]" />
                 <span>01 / Select Adversarial Vector</span>
               </div>
               <div className="space-y-2">
@@ -414,20 +400,20 @@ export function BlastRadiusSimulator() {
                     <button
                       key={scen.id}
                       onClick={() => handleSelectScenario(scen)}
-                      className={`w-full text-left p-3 border transition-colors ${
+                      className={`w-full text-left p-3.5 rounded-xl border transition-all ${
                         isSelected
-                          ? "border-[#38BDF8] bg-[#11141C]"
-                          : "border-[#222733] bg-[#0B0D11] hover:border-slate-600"
+                          ? "border-[#58718a] bg-slate-50 ring-1 ring-[#58718a]/30"
+                          : "border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                       }`}
                     >
                       <div className="flex items-center justify-between font-mono text-[10px] mb-1">
-                        <span className="text-[#38BDF8] font-semibold">{scen.cveStyleTag}</span>
-                        <span className="text-[#F43F5E]">{scen.estimatedDamage}</span>
+                        <span className="text-[#58718a] font-semibold">{scen.cveStyleTag}</span>
+                        <span className="text-[#e05243] font-medium">{scen.estimatedDamage}</span>
                       </div>
-                      <div className="font-semibold text-xs text-white mb-1">
+                      <div className="font-sans font-bold text-xs text-[#111827] mb-1 tracking-tight">
                         {scen.title}
                       </div>
-                      <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-2">
+                      <p className="text-[11px] text-[#475467] leading-relaxed line-clamp-2">
                         {scen.description}
                       </p>
                     </button>
@@ -438,24 +424,24 @@ export function BlastRadiusSimulator() {
 
             {/* Active Policy-as-Code Toggles */}
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-2.5 flex items-center justify-between">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#667085] mb-2.5 flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-[#38BDF8]" />
+                  <Sliders className="w-3.5 h-3.5 text-[#58718a]" />
                   <span>02 / Policy Gates (Toggle Bypass)</span>
                 </div>
-                <span className="text-[10px] text-slate-500 font-mono">AST Fail-Closed</span>
+                <span className="text-[10px] text-[#667085] font-mono">AST Fail-Closed</span>
               </div>
               <div className="space-y-2">
                 {policies.map((pol) => (
                   <label
                     key={pol.id}
-                    className="flex items-center justify-between p-2.5 border border-[#222733] bg-[#11141C] cursor-pointer hover:border-slate-600 transition-colors"
+                    className="flex items-center justify-between p-2.5 rounded-xl border border-slate-200/80 bg-[#f8fafc] cursor-pointer hover:border-slate-300 transition-colors"
                   >
                     <div className="space-y-0.5">
-                      <div className="font-mono text-xs text-white font-medium">
+                      <div className="font-mono text-xs text-[#111827] font-semibold">
                         {pol.id}: {pol.name}
                       </div>
-                      <div className="font-mono text-[10px] text-slate-400">
+                      <div className="font-mono text-[10px] text-[#667085]">
                         Weight: +{pol.weight} Blast Score Contribution
                       </div>
                     </div>
@@ -463,7 +449,7 @@ export function BlastRadiusSimulator() {
                       type="checkbox"
                       checked={pol.enabled}
                       onChange={() => handleTogglePolicy(pol.id)}
-                      className="h-4 w-4 accent-[#38BDF8] rounded-none cursor-pointer"
+                      className="h-4 w-4 accent-[#111827] rounded cursor-pointer"
                     />
                   </label>
                 ))}
@@ -471,31 +457,31 @@ export function BlastRadiusSimulator() {
             </div>
           </div>
 
-          <div className="p-3 border border-[#222733] bg-[#11141C] font-mono text-[11px] text-slate-400 leading-relaxed">
-            <span className="text-white font-semibold">Live Experiment:</span> Uncheck a policy gate above to watch the agent bypass the firewall and transition into green <span className="text-[#10B981]">ALLOWED_VERIFIED</span> state.
+          <div className="p-3.5 rounded-xl border border-slate-200/80 bg-[#f8fafc] font-mono text-[11px] text-[#475467] leading-relaxed">
+            <span className="text-[#111827] font-semibold">Live Experiment:</span> Uncheck a policy gate above to watch the agent bypass the firewall and transition into green <span className="text-[#16a34a] font-semibold">ALLOWED_VERIFIED</span> state.
           </div>
         </section>
 
         {/* PANE 2: RECEIPTD INTERCEPTOR & CRYPTOGRAPHIC RECEIPT (5 Cols) */}
-        <section className="col-span-12 lg:col-span-5 p-5 sm:p-6 space-y-6 bg-[#0B0D11]">
-          <div className="flex items-center justify-between border-b border-[#222733] pb-4">
+        <section className="col-span-12 lg:col-span-5 p-5 sm:p-6 rounded-[1.25rem] border border-[rgba(36,36,38,0.08)] bg-white shadow-xs space-y-6">
+          <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
             <div>
-              <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#667085]">
                 03 / Receiptd AST &amp; JSON-RPC Interceptor
               </div>
-              <h2 className="font-serif text-2xl text-white mt-0.5 tracking-tight">
+              <h2 className="font-sans text-xl sm:text-2xl font-extrabold text-[#111827] mt-0.5 tracking-[-0.025em]">
                 Step T+{activeStepIdx}: {activeReceipt?.mcpRequest.params.name ?? "..."}
               </h2>
             </div>
 
             {activeReceipt && (
               <span
-                className={`font-mono text-xs px-3 py-1 border font-semibold tracking-wider uppercase ${
+                className={`font-mono text-xs px-3 py-1 rounded-full border font-bold tracking-wider uppercase ${
                   isTampered
-                    ? "border-[#F43F5E] bg-[#F43F5E]/10 text-[#F43F5E]"
+                    ? "border-[#fca5a5] bg-[#fef2f2] text-[#e05243]"
                     : activeReceipt.decision === "BLOCKED_FAIL_CLOSED"
-                    ? "border-[#F43F5E] bg-[#F43F5E]/10 text-[#F43F5E]"
-                    : "border-[#10B981] bg-[#10B981]/10 text-[#10B981]"
+                    ? "border-[#fca5a5] bg-[#fef2f2] text-[#e05243]"
+                    : "border-[#bbf7d0] bg-[#f0fdf4] text-[#16a34a]"
                 }`}
               >
                 {isTampered ? "TAMPERED_HASH_MISMATCH" : activeReceipt.decision}
@@ -505,39 +491,39 @@ export function BlastRadiusSimulator() {
 
           {/* Blast Radius Quantitative Meter */}
           {activeReceipt && (
-            <div className="p-4 border border-[#222733] bg-[#11141C] space-y-2.5">
+            <div className="p-4 rounded-xl border border-slate-200/80 bg-[#f8fafc] space-y-2.5">
               <div className="flex justify-between font-mono text-xs">
-                <span className="text-slate-400 uppercase tracking-wider text-[10px]">
+                <span className="text-[#667085] uppercase tracking-wider text-[10px]">
                   DETERMINISTIC BLAST-RADIUS SCORE
                 </span>
                 <span
                   className={`font-semibold ${
                     activeReceipt.blastRadiusScore >= 75
-                      ? "text-[#F43F5E]"
+                      ? "text-[#e05243]"
                       : activeReceipt.blastRadiusScore >= 40
-                      ? "text-amber-400"
-                      : "text-[#10B981]"
+                      ? "text-amber-600"
+                      : "text-[#16a34a]"
                   }`}
                 >
                   {activeReceipt.blastRadiusScore} / 100
                 </span>
               </div>
-              <div className="w-full h-2 bg-[#0B0D11] border border-[#222733]">
+              <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
                 <div
-                  className={`h-full transition-all duration-300 ${
+                  className={`h-full transition-all duration-300 rounded-full ${
                     activeReceipt.blastRadiusScore >= 75
-                      ? "bg-[#F43F5E]"
+                      ? "bg-[#e05243]"
                       : activeReceipt.blastRadiusScore >= 40
-                      ? "bg-amber-400"
-                      : "bg-[#10B981]"
+                      ? "bg-amber-500"
+                      : "bg-[#16a34a]"
                   }`}
                   style={{ width: `${activeReceipt.blastRadiusScore}%` }}
                 />
               </div>
-              <div className="font-mono text-[10px] text-slate-400 flex items-center justify-between">
+              <div className="font-mono text-[10px] text-[#667085] flex items-center justify-between">
                 <span>
                   Triggered Gates:{" "}
-                  <strong className="text-white">
+                  <strong className="text-[#111827]">
                     {activeReceipt.matchedRules.length > 0
                       ? activeReceipt.matchedRules.join(", ")
                       : "NONE (SAFE_EXECUTION)"}
@@ -551,31 +537,31 @@ export function BlastRadiusSimulator() {
           {/* Raw MCP JSON-RPC Payload Inspector */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                <Key className="w-3 h-3 text-[#38BDF8]" />
+              <div className="text-[10px] font-mono uppercase tracking-wider text-[#667085] flex items-center gap-1.5">
+                <Key className="w-3 h-3 text-[#58718a]" />
                 <span>Intercepted MCP JSON-RPC 2.0 Frame</span>
               </div>
-              <span className="font-mono text-[10px] text-slate-500">Canonical JSON</span>
+              <span className="font-mono text-[10px] text-[#667085]">Canonical JSON</span>
             </div>
-            <pre className="p-3.5 border border-[#222733] bg-[#11141C] font-mono text-xs text-[#38BDF8] overflow-x-auto max-h-56 leading-relaxed">
+            <pre className="p-3.5 rounded-xl border border-slate-200/80 bg-[#f8fafc] font-mono text-xs text-[#242426] overflow-x-auto max-h-56 leading-relaxed">
               {displayPayload}
             </pre>
           </div>
 
           {/* Ed25519 Receipt & Merkle Ledger */}
           {activeReceipt && (
-            <div className="p-4 border border-[#222733] bg-[#11141C] space-y-3 font-mono text-xs">
+            <div className="p-4 rounded-xl border border-slate-200/80 bg-[#f8fafc] space-y-3 font-mono text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 uppercase text-[10px] tracking-wider">
+                <span className="text-[#667085] uppercase text-[10px] tracking-wider">
                   Cryptographic Execution Receipt
                 </span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleToggleTamper}
-                    className={`px-2 py-0.5 border text-[10px] font-mono transition-colors flex items-center gap-1 cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-full border text-[10px] font-mono transition-colors flex items-center gap-1 cursor-pointer ${
                       isTampered
-                        ? "border-[#F43F5E] bg-[#F43F5E]/15 text-[#F43F5E]"
-                        : "border-[#222733] text-slate-300 hover:border-rose-400 hover:text-rose-400"
+                        ? "border-[#fca5a5] bg-[#fef2f2] text-[#e05243]"
+                        : "border-slate-300 text-[#475467] bg-white hover:border-[#e05243] hover:text-[#e05243]"
                     }`}
                     title="Intentionally mutate a byte in the payload to test tamper detection"
                   >
@@ -584,12 +570,12 @@ export function BlastRadiusSimulator() {
                   </button>
                   <button
                     onClick={verifyActiveReceipt}
-                    className={`px-2.5 py-0.5 border text-[10px] font-mono font-semibold transition-colors cursor-pointer ${
+                    className={`px-3 py-1 rounded-full border text-[10px] font-mono font-semibold transition-colors cursor-pointer ${
                       verifyStatus === "VALID"
-                        ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
+                        ? "border-[#bbf7d0] bg-[#f0fdf4] text-[#16a34a]"
                         : verifyStatus === "TAMPERED"
-                        ? "border-[#F43F5E] bg-[#F43F5E]/10 text-[#F43F5E]"
-                        : "border-[#38BDF8] text-[#38BDF8] hover:bg-[#38BDF8]/10"
+                        ? "border-[#fca5a5] bg-[#fef2f2] text-[#e05243]"
+                        : "border-slate-300 bg-white text-[#111827] hover:bg-slate-50"
                     }`}
                   >
                     {verifyStatus === "VALID"
@@ -603,10 +589,10 @@ export function BlastRadiusSimulator() {
 
               {verifyStatus !== "IDLE" && (
                 <div
-                  className={`p-2 border text-[11px] font-mono flex items-center justify-between ${
+                  className={`p-2.5 rounded-xl border text-[11px] font-mono flex items-center justify-between ${
                     verifyStatus === "VALID"
-                      ? "border-[#10B981] bg-[#10B981]/10 text-[#10B981]"
-                      : "border-[#F43F5E] bg-[#F43F5E]/10 text-[#F43F5E]"
+                      ? "border-[#bbf7d0] bg-[#f0fdf4] text-[#16a34a]"
+                      : "border-[#fca5a5] bg-[#fef2f2] text-[#e05243]"
                   }`}
                 >
                   <div className="flex items-center gap-1.5">
@@ -624,31 +610,31 @@ export function BlastRadiusSimulator() {
                 </div>
               )}
 
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#222733] text-[10px]">
-                <span className="text-slate-500">Payload SHA-256:</span>
-                <span className="col-span-2 truncate text-slate-300 select-all font-mono">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200/80 text-[10px]">
+                <span className="text-[#667085]">Payload SHA-256:</span>
+                <span className="col-span-2 truncate text-[#242426] select-all font-mono">
                   {isTampered
                     ? activeReceipt.payloadSha256.slice(0, -2) + "ff"
                     : activeReceipt.payloadSha256}
                 </span>
 
-                <span className="text-slate-500">Prev Hash Link:</span>
-                <span className="col-span-2 truncate text-slate-500 select-all font-mono">
+                <span className="text-[#667085]">Prev Hash Link:</span>
+                <span className="col-span-2 truncate text-[#667085] select-all font-mono">
                   {activeReceipt.prevReceiptHash}
                 </span>
 
-                <span className="text-slate-500">Merkle Root:</span>
-                <span className="col-span-2 truncate text-[#38BDF8] select-all font-mono">
+                <span className="text-[#667085]">Merkle Root:</span>
+                <span className="col-span-2 truncate text-[#58718a] font-semibold select-all font-mono">
                   {activeReceipt.merkleRoot}
                 </span>
 
-                <span className="text-slate-500">Signature:</span>
-                <span className="col-span-2 truncate text-[#10B981] select-all font-mono">
+                <span className="text-[#667085]">Signature:</span>
+                <span className="col-span-2 truncate text-[#16a34a] font-semibold select-all font-mono">
                   {activeReceipt.ed25519SignatureHex}
                 </span>
 
-                <span className="text-slate-500">Public Key:</span>
-                <span className="col-span-2 truncate text-slate-400 select-all font-mono">
+                <span className="text-[#667085]">Public Key:</span>
+                <span className="col-span-2 truncate text-[#475467] select-all font-mono">
                   {activeReceipt.publicKeyHex}
                 </span>
               </div>
@@ -657,22 +643,22 @@ export function BlastRadiusSimulator() {
         </section>
 
         {/* PANE 3: INFINI TIME-TRAVEL DEBUGGER & STATE FORK (4 Cols) */}
-        <section className="col-span-12 lg:col-span-4 p-5 sm:p-6 flex flex-col justify-between bg-[#0B0D11] space-y-6">
+        <section className="col-span-12 lg:col-span-4 p-5 sm:p-6 rounded-[1.25rem] border border-[rgba(36,36,38,0.08)] bg-white shadow-xs flex flex-col justify-between space-y-6">
           <div className="space-y-6">
-            <div className="flex items-center justify-between border-b border-[#222733] pb-3">
+            <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
               <div>
-                <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <GitBranch className="w-3.5 h-3.5 text-[#38BDF8]" />
+                <div className="text-[10px] font-mono uppercase tracking-wider text-[#667085] flex items-center gap-1.5">
+                  <GitBranch className="w-3.5 h-3.5 text-[#58718a]" />
                   <span>04 / INFINI Deterministic Time-Travel Replay</span>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1">
+                <p className="text-[11px] text-[#475467] mt-1">
                   Scrub state timeline, mutate frame arguments, and fork execution deterministically.
                 </p>
               </div>
               {forkedSteps && (
                 <button
                   onClick={handleResetFork}
-                  className="px-2 py-0.5 border border-slate-700 text-[10px] font-mono text-slate-400 hover:text-white flex items-center gap-1"
+                  className="px-2.5 py-1 rounded-full border border-slate-300 text-[10px] font-mono text-[#475467] hover:text-[#111827] hover:bg-slate-50 flex items-center gap-1 cursor-pointer"
                 >
                   <RotateCcw className="w-3 h-3" />
                   <span>Reset Fork</span>
@@ -696,23 +682,23 @@ export function BlastRadiusSimulator() {
                       setVerifyStatus("IDLE");
                       syncUrlParams(selectedScenarioId, idx, false, policies);
                     }}
-                    className={`w-full text-left p-3 border font-mono text-xs flex items-center justify-between transition-colors ${
+                    className={`w-full text-left p-3 rounded-xl border font-mono text-xs flex items-center justify-between transition-all cursor-pointer ${
                       isCurrent
-                        ? "border-[#38BDF8] bg-[#11141C]"
-                        : "border-[#222733] bg-[#0B0D11] opacity-75 hover:opacity-100"
+                        ? "border-[#58718a] bg-slate-50 ring-1 ring-[#58718a]/30"
+                        : "border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                     }`}
                   >
                     <div className="truncate pr-2">
-                      <span className="text-slate-500 mr-2 font-semibold">T+{idx}</span>
-                      <span className="text-white font-medium">
+                      <span className="text-[#667085] mr-2 font-semibold">T+{idx}</span>
+                      <span className="text-[#111827] font-semibold">
                         {rec.mcpRequest.params.name}
                       </span>
                     </div>
                     <span
-                      className={`text-[9px] font-semibold px-1.5 py-0.5 border uppercase tracking-wider shrink-0 ${
+                      className={`text-[9px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider shrink-0 ${
                         rec.decision === "BLOCKED_FAIL_CLOSED"
-                          ? "border-[#F43F5E] text-[#F43F5E] bg-[#F43F5E]/10"
-                          : "border-[#10B981] text-[#10B981] bg-[#10B981]/10"
+                          ? "border-[#fca5a5] text-[#e05243] bg-[#fef2f2]"
+                          : "border-[#bbf7d0] text-[#16a34a] bg-[#f0fdf4]"
                       }`}
                     >
                       {rec.decision === "BLOCKED_FAIL_CLOSED" ? "BLOCKED" : "ALLOWED"}
@@ -725,21 +711,21 @@ export function BlastRadiusSimulator() {
             {/* Live Payload Mutation & Fork Box */}
             <div className="space-y-2">
               <div className="flex items-center justify-between font-mono text-[10px]">
-                <span className="text-slate-400 uppercase tracking-wider">
+                <span className="text-[#667085] uppercase tracking-wider">
                   Mutate Frame T+{activeStepIdx} Arguments
                 </span>
-                <span className="text-[#38BDF8] font-semibold">0 LLM Tokens Burned</span>
+                <span className="text-[#16a34a] font-semibold">0 LLM Tokens Burned</span>
               </div>
               <textarea
                 rows={5}
                 value={editableArgs}
                 onChange={(e) => setEditableArgs(e.target.value)}
-                className="w-full p-3 bg-[#11141C] border border-[#222733] font-mono text-xs text-white focus:outline-none focus:border-[#38BDF8] transition-colors leading-relaxed"
+                className="w-full p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl font-mono text-xs text-[#242426] focus:outline-none focus:ring-1 focus:ring-[#58718a] focus:border-[#58718a] transition-all leading-relaxed"
                 spellCheck={false}
               />
               <button
                 onClick={handleForkAndReplay}
-                className="w-full py-2.5 bg-[#38BDF8] text-[#0B0D11] font-mono text-xs font-semibold uppercase tracking-wider hover:bg-[#38BDF8]/90 transition-colors cursor-pointer"
+                className="w-full py-2.5 rounded-full bg-[#111827] text-white font-mono text-xs font-bold uppercase tracking-wider hover:bg-[#242426] transition-colors cursor-pointer"
               >
                 Fork Trace &amp; Replay from T+{activeStepIdx}
               </button>
@@ -747,42 +733,41 @@ export function BlastRadiusSimulator() {
           </div>
 
           {/* Local CLI Quickstart Card */}
-          <div className="p-3.5 border border-[#222733] bg-[#11141C] font-mono text-xs space-y-1.5">
-            <div className="text-[10px] text-slate-400 uppercase tracking-wider">
+          <div className="p-3.5 rounded-xl border border-slate-200/80 bg-[#f8fafc] font-mono text-xs space-y-1.5">
+            <div className="text-[10px] text-[#667085] uppercase tracking-wider">
               Wrap Any Agent In 1 Command
             </div>
-            <div className="text-slate-300 text-[11px] select-all bg-[#0B0D11] p-2 border border-[#222733]">
+            <div className="text-[#242426] text-[11px] select-all bg-white p-2 rounded-lg border border-slate-200/80">
               $ pip install git+https://github.com/NickAltstein/receiptd &amp;&amp; receiptd init --claude-code
             </div>
-            <div className="text-[10px] text-emerald-400 font-mono flex items-center gap-1 pt-0.5">
+            <div className="text-[10px] text-[#16a34a] font-mono flex items-center gap-1 pt-0.5 font-medium">
               <span>✓ 100% Local Execution • Zero Data Egress • Open Source (MIT)</span>
             </div>
           </div>
         </section>
       </main>
 
-      {/* Below-the-Fold Strip (2 Columns — Pre-Deployment CI Gate vs. Runtime Enforcement) */}
       {/* Clean Minimal Footer */}
-      <footer className="border-t border-[#222733] bg-[#0B0D11] px-6 py-4">
-        <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-slate-500">
+      <footer className="border-t border-slate-200/80 bg-white/60 px-6 py-4 mt-8">
+        <div className="max-w-[1720px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[#667085]">
           <div className="flex items-center gap-2">
             <span>&copy; 2026 AuditGPT.ai</span>
             <span>&bull;</span>
-            <span>Runtime Evidence: <a href="https://github.com/NickAltstein/receiptd" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:underline">Receiptd</a></span>
+            <span>Runtime Evidence: <a href="https://github.com/NickAltstein/receiptd" target="_blank" rel="noopener noreferrer" className="text-[#16a34a] font-semibold hover:underline">Receiptd</a></span>
             <span>&bull;</span>
-            <span>Trace Replay: <a href="https://github.com/NickAltstein/infini" target="_blank" rel="noopener noreferrer" className="text-[#38BDF8] hover:underline">INFINI</a></span>
+            <span>Trace Replay: <a href="https://github.com/NickAltstein/infini" target="_blank" rel="noopener noreferrer" className="text-[#58718a] font-semibold hover:underline">INFINI</a></span>
           </div>
           <div className="flex items-center gap-6">
-            <a href="https://auditgpt.ai" className="hover:text-slate-300 transition-colors">
+            <a href="https://auditgpt.ai" className="hover:text-[#111827] transition-colors">
               &larr; Return to AuditGPT.ai
             </a>
-            <a href="/terms" className="hover:text-slate-300 transition-colors">
+            <a href="/terms" className="hover:text-[#111827] transition-colors">
               Terms of Service
             </a>
-            <a href="/privacy" className="hover:text-slate-300 transition-colors">
+            <a href="/privacy" className="hover:text-[#111827] transition-colors">
               Privacy Policy
             </a>
-            <span className="text-emerald-400/80">Local-First · Zero Data Egress</span>
+            <span className="text-[#16a34a]">Local-First · Zero Data Egress</span>
           </div>
         </div>
       </footer>

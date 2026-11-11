@@ -39,8 +39,14 @@ export function BlastRadiusSimulator() {
   const [activeStepIdx, setActiveStepIdx] = useState<number>(0);
   const [editableArgs, setEditableArgs] = useState<string>("");
   const [isTampered, setIsTampered] = useState<boolean>(false);
-  const [verifyStatus, setVerifyStatus] = useState<"IDLE" | "VALID" | "TAMPERED">("IDLE");
-  const [verifyReason, setVerifyReason] = useState<string>("");
+  const [verificationRequest, setVerificationRequest] = useState<ExecutionReceipt | null>(null);
+  const [verification, setVerification] = useState<{
+    receipt: ExecutionReceipt;
+    tampered: boolean;
+    valid: boolean;
+    reason: string;
+  } | null>(null);
+  const [cryptoUnavailable, setCryptoUnavailable] = useState(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [forkedSteps, setForkedSteps] = useState<MCPToolCall[] | null>(null);
 
@@ -89,6 +95,7 @@ export function BlastRadiusSimulator() {
         const ctx = await initSignerContext();
         if (mounted) setSignerCtx(ctx);
       } catch (err) {
+        if (mounted) setCryptoUnavailable(true);
         console.error("Crypto init error:", err);
       }
     }
@@ -180,7 +187,7 @@ export function BlastRadiusSimulator() {
       setReceipts(generated);
       const targetIdx =
         stepToSelect !== undefined
-          ? Math.min(stepToSelect, generated.length - 1)
+          ? Math.max(0, Math.min(stepToSelect, generated.length - 1))
           : generated.length - 1;
       setActiveStepIdx(targetIdx);
 
@@ -188,15 +195,6 @@ export function BlastRadiusSimulator() {
         setEditableArgs(
           JSON.stringify(generated[targetIdx].mcpRequest.params.arguments, null, 2)
         );
-      }
-
-      // If tamper mode is active, simulate tamper verification immediately
-      if (tamperActive && generated[targetIdx]) {
-        setVerifyStatus("TAMPERED");
-        setVerifyReason("PAYLOAD_HASH_MISMATCH (1-Byte Ledger Mutation Detected)");
-      } else {
-        setVerifyStatus("IDLE");
-        setVerifyReason("");
       }
 
       syncUrlParams(selectedScenarioId, targetIdx, tamperActive, activePolicies);
@@ -221,8 +219,7 @@ export function BlastRadiusSimulator() {
     setSelectedScenarioId(scen.id);
     setForkedSteps(null);
     setIsTampered(false);
-    setVerifyStatus("IDLE");
-    setVerifyReason("");
+    setVerificationRequest(null);
     const steps = scen.steps;
     const lastStep = steps.length - 1;
     setActiveStepIdx(lastStep);
@@ -234,8 +231,7 @@ export function BlastRadiusSimulator() {
     setForkedSteps(null);
     setIsTampered(false);
     setActiveStepIdx(0);
-    setVerifyStatus("IDLE");
-    setVerifyReason("");
+    setVerificationRequest(null);
   };
 
   // 6. Policy Toggle Handler
@@ -276,47 +272,11 @@ export function BlastRadiusSimulator() {
     runTrace(selectedScenario.steps, policies, false, selectedScenario.steps.length - 1);
   };
 
-  // 8. 1-Click 1-Byte Ledger Tamper Injection
-  const handleToggleTamper = async () => {
+  const handleToggleTamper = () => {
     const nextTamper = !isTampered;
     setIsTampered(nextTamper);
-
-    if (nextTamper) {
-      // Simulate 1-byte mutation on the current active receipt payload
-      setVerifyStatus("TAMPERED");
-      setVerifyReason("PAYLOAD_HASH_MISMATCH (1-Byte Ledger Mutation Detected)");
-    } else {
-      setVerifyStatus("IDLE");
-      setVerifyReason("");
-    }
+    setVerificationRequest(null);
     syncUrlParams(selectedScenarioId, activeStepIdx, nextTamper, policies);
-  };
-
-  // 9. Cryptographic Receipt Verification Check
-  const verifyActiveReceipt = async () => {
-    const active = receipts[activeStepIdx];
-    if (!active || !signerCtx) return;
-
-    if (isTampered) {
-      setVerifyStatus("TAMPERED");
-      setVerifyReason("PAYLOAD_HASH_MISMATCH (1-Byte Ledger Mutation Detected)");
-      return;
-    }
-
-    const result = await verifyReceiptIntegrity(
-      signerCtx,
-      active.canonicalPayload,
-      active.payloadSha256,
-      active.ed25519SignatureHex
-    );
-
-    if (result.valid) {
-      setVerifyStatus("VALID");
-      setVerifyReason(result.reason);
-    } else {
-      setVerifyStatus("TAMPERED");
-      setVerifyReason(result.reason);
-    }
   };
 
   // 10. Copy Exploit Deep-Link to Clipboard
@@ -329,20 +289,57 @@ export function BlastRadiusSimulator() {
 
   const activeReceipt = receipts[activeStepIdx];
 
-  // Tampered display payload (mutated by 1 character if tamper is injected)
-  const displayPayload = useMemo(() => {
-    if (!activeReceipt) return "Initializing...";
-    if (!isTampered) return JSON.stringify(activeReceipt.mcpRequest, null, 2);
+  const canonicalPayload = activeReceipt?.canonicalPayload;
+  // Canonical receipt JSON begins with an ASCII opening brace. Change that
+  // byte while preserving the original digest and signature.
+  const payloadToVerify = canonicalPayload && isTampered
+    ? `[${canonicalPayload.slice(1)}`
+    : canonicalPayload;
+  const verificationRequested = isTampered || Boolean(activeReceipt && verificationRequest === activeReceipt);
 
-    const clone = JSON.parse(JSON.stringify(activeReceipt.mcpRequest));
-    const argsStr = JSON.stringify(clone.params.arguments);
-    // Mutate first character in arguments
-    clone.params.arguments = {
-      ...clone.params.arguments,
-      _TAMPER_MUTATION_BYTE: "0xDEADBEEF",
+  useEffect(() => {
+    if (!activeReceipt || !signerCtx || !payloadToVerify || !verificationRequested) return;
+    let current = true;
+
+    const verify = async () => {
+      try {
+        const result = await verifyReceiptIntegrity(
+          signerCtx,
+          payloadToVerify,
+          activeReceipt.payloadSha256,
+          activeReceipt.ed25519SignatureHex
+        );
+        if (current) setVerification({ receipt: activeReceipt, tampered: isTampered, ...result });
+      } catch {
+        if (current) {
+          setVerification({
+            receipt: activeReceipt,
+            tampered: isTampered,
+            valid: false,
+            reason: "Browser verification could not complete.",
+          });
+        }
+      }
     };
-    return JSON.stringify(clone, null, 2);
-  }, [activeReceipt, isTampered]);
+
+    void verify();
+    return () => { current = false; };
+  }, [activeReceipt, isTampered, payloadToVerify, signerCtx, verificationRequested]);
+
+  const currentVerification = verificationRequested &&
+    verification && verification.receipt === activeReceipt && verification.tampered === isTampered
+    ? verification
+    : null;
+  const verifyReason = currentVerification?.reason ?? "";
+  const verifyStatus = currentVerification
+    ? currentVerification.valid ? "VALID" : "REJECTED"
+    : "IDLE";
+  const verifyActiveReceipt = () => {
+    if (activeReceipt) setVerificationRequest(activeReceipt);
+  };
+  const displayPayload = activeReceipt
+    ? JSON.stringify(activeReceipt.mcpRequest, null, 2)
+    : "Initializing…";
 
   // Highlight hazardous AST substrings inside JSON-RPC viewer
   const renderHighlightedPayload = useCallback((rawJson: string) => {
@@ -420,7 +417,7 @@ policies:
     <div className="min-h-screen bg-[#ebeff5] text-[#242426] font-sans selection:bg-[#9EFFA9] selection:text-[#111827]">
       {/* Top Floating Header Bar Aligned with AuditGPT Design System */}
       <header className="sticky top-3 z-40 mx-auto max-w-7xl px-4 py-2">
-        <nav className="flex items-center justify-between gap-4 rounded-full border border-slate-200/80 bg-white/95 px-5 py-2.5 shadow-xs backdrop-blur-md">
+        <nav className="flex items-center justify-between gap-4 rounded-full border border-slate-200/80 bg-white/95 px-3 py-2.5 shadow-xs sm:px-5 backdrop-blur-md">
           <div className="flex items-center gap-3.5 whitespace-nowrap shrink-0">
             <a
               href="https://auditgpt.ai"
@@ -446,28 +443,28 @@ policies:
               </div>
             </a>
             <span className="hidden xl:inline-flex items-center rounded-full bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-[#475467] whitespace-nowrap shrink-0">
-              Receiptd (Ed25519) + INFINI
+              Receiptd policy simulation
             </span>
           </div>
 
           {/* Right Links & Exploit Deep-Link */}
           <div className="flex items-center gap-2.5 sm:gap-3 font-mono text-xs text-[#667085] whitespace-nowrap shrink-0">
             <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 whitespace-nowrap shrink-0">
-              <span className="text-[10px] text-[#667085] uppercase">In-Browser Policy Check:</span>
+              <span className="text-[10px] text-[#667085] uppercase">Browser receipt creation:</span>
               <span className="text-[#111827] font-semibold">
                 {formatLatency(activeReceipt?.latencyMs)}
               </span>
             </div>
             <button
               onClick={() => setShowYamlModal(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-[#9EFFA9] text-[#111827] text-xs font-mono font-semibold border border-slate-200/80 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-[#9EFFA9] text-[#111827] text-xs font-mono font-semibold border border-slate-200/80 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               <FileCode className="w-3.5 h-3.5 text-[#58718a]" />
               <span>Export CI Gate YAML &rarr;</span>
             </button>
             <a
               href="https://auditgpt.ai"
-              className="hidden sm:inline-block px-3 py-1.5 rounded-full text-[#475467] hover:text-[#111827] hover:bg-slate-100 border border-slate-200/80 transition-colors text-xs font-mono whitespace-nowrap shrink-0"
+              className="hidden lg:inline-block px-3 py-1.5 rounded-full text-[#475467] hover:text-[#111827] hover:bg-slate-100 border border-slate-200/80 transition-colors text-xs font-mono whitespace-nowrap shrink-0"
             >
               &larr; auditgpt.ai
             </a>
@@ -492,14 +489,75 @@ policies:
         </nav>
       </header>
 
+      <section aria-labelledby="demo-title" className="mx-auto max-w-7xl px-4 py-5 sm:py-8">
+        <div className="grid gap-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8 lg:grid-cols-[1fr_0.9fr] lg:gap-10">
+          <div className="min-w-0">
+            <p className="font-mono text-xs font-semibold uppercase tracking-widest text-slate-600">
+              Interactive browser simulation
+            </p>
+            <h1 id="demo-title" className="mt-3 text-3xl font-bold tracking-tight text-slate-950 sm:text-5xl">
+              Inspect an agent tool decision
+            </h1>
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-slate-600 sm:text-base">
+              See the policy decision, verify the signed receipt, then change one byte to see what the verifier catches. Sample tool calls stay in the browser.
+            </p>
+            <a href="#simulator" className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-800 underline underline-offset-4">
+              Explore scenario controls and trace <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+          <div className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+            <div role="status" aria-live="polite">
+              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-700">
+                {cryptoUnavailable ? "Browser cryptography unavailable" : activeReceipt
+                  ? activeReceipt.decision === "BLOCKED_FAIL_CLOSED" ? "Blocked by policy" : "Allowed by policy"
+                  : "Preparing demo…"}
+              </p>
+              {activeReceipt && (
+                <>
+                  <p className="mt-2 break-all font-mono text-sm font-semibold text-slate-950">
+                    {activeReceipt.mcpRequest.params.name}
+                  </p>
+                  <p className="mt-1 break-words text-sm text-slate-600">
+                    {activeReceipt.matchedRules.length
+                      ? `Matched rules: ${activeReceipt.matchedRules.join(", ")}`
+                      : "No matching rules."}
+                  </p>
+                  <p className="mt-3 text-sm font-medium text-slate-800">
+                    {verifyStatus === "VALID" ? `Receipt verified · ${activeReceipt.signingScheme}`
+                      : verifyStatus === "REJECTED" ? (verifyReason.startsWith("PAYLOAD_HASH_MISMATCH")
+                        ? "Tamper detected · payload hash differs from the signed receipt"
+                        : "Receipt verification failed")
+                      : verificationRequested ? "Verifying receipt…"
+                      : `Receipt ready · ${activeReceipt.signingScheme}`}
+                  </p>
+                </>
+              )}
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button type="button" onClick={verifyActiveReceipt} disabled={!activeReceipt || isTampered}
+                className="min-h-11 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50">
+                Verify receipt
+              </button>
+              <button type="button" onClick={handleToggleTamper} disabled={!activeReceipt}
+                className="min-h-11 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-100 disabled:opacity-50">
+                {isTampered ? "Restore original" : "Change one byte"}
+              </button>
+            </div>
+            {isTampered && activeReceipt && (
+              <p className="mt-3 text-sm text-slate-600">The payload’s first byte changed from <code>{'{'}</code> to <code>[</code>. The stored hash and signature are unchanged.</p>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Sub-Header Context Bar: Target Environment Selector & BYOK Telemetry */}
       <div className="mx-auto max-w-7xl px-4 pt-1 pb-1">
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-xs px-4 py-2 font-mono text-xs shadow-2xs">
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             <span className="text-[10px] uppercase tracking-wider text-[#667085] font-semibold whitespace-nowrap shrink-0">
               Target Environment:
             </span>
-            <div className="flex items-center gap-1 p-0.5 rounded-full border border-slate-200/80 bg-slate-50 text-[11px]">
+            <div className="flex flex-wrap items-center gap-1 p-0.5 rounded-xl border border-slate-200/80 bg-slate-50 text-[11px]">
               {(
                 [
                   { id: "DECENTRALIZED_NODE", label: "Decentralized Node" },
@@ -527,7 +585,7 @@ policies:
               BYOK KEYS: <span className="text-[#16a34a] font-semibold">LOCAL-HASHED</span>
             </span>
             <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467] whitespace-nowrap shrink-0">
-              RUNTIME: <span className="text-[#16a34a] font-semibold">Receiptd (Ed25519 + Merkle)</span>
+              RUNTIME: <span className="text-[#16a34a] font-semibold">Browser simulation</span>
             </span>
             <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 text-[#475467] whitespace-nowrap shrink-0">
               TRACE: <span className="text-[#58718a] font-semibold">INFINI traces</span>
@@ -537,7 +595,7 @@ policies:
       </div>
 
       {/* Main 3-Pane Split Grid */}
-      <main id="simulator" className="max-w-7xl mx-auto p-4 sm:p-5 grid grid-cols-12 gap-5 items-start">
+      <main id="simulator" className="max-w-7xl mx-auto scroll-mt-24 p-4 sm:p-5 grid grid-cols-12 gap-5 items-start">
         {/* PANE 1: ATTACK VECTOR & SCENARIO SELECTOR (3 Cols) */}
         <section className="col-span-12 lg:col-span-3 p-5 rounded-[1.25rem] border border-[rgba(36,36,38,0.08)] bg-white shadow-xs space-y-6 flex flex-col justify-between">
           <div className="space-y-6">
@@ -652,14 +710,12 @@ policies:
             {activeReceipt && (
               <span
                 className={`font-mono text-xs px-3 py-1 rounded-full border font-bold tracking-wider uppercase ${
-                  isTampered
-                    ? "border-[#fca5a5] bg-[#fef2f2] text-[#e05243]"
-                    : activeReceipt.decision === "BLOCKED_FAIL_CLOSED"
+                  activeReceipt.decision === "BLOCKED_FAIL_CLOSED"
                     ? "border-[#fca5a5] bg-[#fef2f2] text-[#e05243]"
                     : "border-[#bbf7d0] bg-[#f0fdf4] text-[#16a34a]"
                 }`}
               >
-                {isTampered ? "TAMPERED_HASH_MISMATCH" : activeReceipt.decision}
+                {activeReceipt.decision}
               </span>
             )}
           </div>
@@ -754,11 +810,11 @@ policies:
           {/* Ed25519 Receipt & Merkle Ledger */}
           {activeReceipt && (
             <div className="p-4 rounded-xl border border-slate-200/80 bg-[#f8fafc] space-y-3 font-mono text-xs">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-[#667085] uppercase text-[10px] tracking-wider">
                   Cryptographic Execution Receipt
                 </span>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => setShowYamlModal(true)}
                     className="px-2.5 py-1 rounded-full border border-slate-300 text-[10px] font-mono text-[#111827] bg-white hover:bg-slate-50 transition-colors flex items-center gap-1 cursor-pointer"
@@ -783,16 +839,16 @@ policies:
                     className={`px-3 py-1 rounded-full border text-[10px] font-mono font-semibold transition-colors cursor-pointer ${
                       verifyStatus === "VALID"
                         ? "border-[#bbf7d0] bg-[#f0fdf4] text-[#16a34a]"
-                        : verifyStatus === "TAMPERED"
+                        : verifyStatus === "REJECTED"
                         ? "border-[#fca5a5] bg-[#fef2f2] text-[#e05243]"
                         : "border-slate-300 bg-white text-[#111827] hover:bg-slate-50"
                     }`}
                   >
                     {verifyStatus === "VALID"
                       ? "✓ SIGNATURE VALIDATED"
-                      : verifyStatus === "TAMPERED"
-                      ? "✗ TAMPER DETECTED"
-                      : "Verify Ed25519 Signature"}
+                      : verifyStatus === "REJECTED"
+                      ? "✗ VERIFICATION FAILED"
+                      : "Verify receipt"}
                   </button>
                 </div>
               </div>
@@ -823,9 +879,7 @@ policies:
               <div className="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200/80 text-[10px]">
                 <span className="text-[#667085]">Payload SHA-256:</span>
                 <span className="col-span-2 truncate text-[#242426] select-all font-mono">
-                  {isTampered
-                    ? activeReceipt.payloadSha256.slice(0, -2) + "ff"
-                    : activeReceipt.payloadSha256}
+                  {activeReceipt.payloadSha256}
                 </span>
 
                 <span className="text-[#667085]">Prev Hash Link:</span>
@@ -843,7 +897,7 @@ policies:
                   {activeReceipt.ed25519SignatureHex}
                 </span>
 
-                <span className="text-[#667085]">Public Key:</span>
+                <span className="text-[#667085]">Verification key:</span>
                 <span className="col-span-2 truncate text-[#475467] select-all font-mono">
                   {activeReceipt.publicKeyHex}
                 </span>
@@ -889,7 +943,7 @@ policies:
                         JSON.stringify(rec.mcpRequest.params.arguments, null, 2)
                       );
                       setIsTampered(false);
-                      setVerifyStatus("IDLE");
+                      setVerificationRequest(null);
                       syncUrlParams(selectedScenarioId, idx, false, policies);
                     }}
                     className={`w-full text-left p-3 rounded-xl border font-mono text-xs flex items-center justify-between transition-all cursor-pointer ${

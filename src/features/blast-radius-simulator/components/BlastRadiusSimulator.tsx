@@ -31,6 +31,23 @@ import {
   X,
 } from "lucide-react";
 
+function ReceiptdMark({ compact = false }: { compact?: boolean }) {
+  return (
+    <a
+      href="https://auditgpt.ai/receiptd"
+      aria-label="Learn how Receiptd works"
+      className="inline-flex shrink-0 items-center gap-1.5 rounded text-xs font-semibold normal-case tracking-normal text-slate-800 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
+    >
+      <span
+        aria-hidden="true"
+        className="block h-6 w-5 rounded-sm bg-[#101415] bg-no-repeat"
+        style={{ backgroundImage: "url(/receiptd-banner.png)", backgroundSize: "112px auto", backgroundPosition: "-21px -6px" }}
+      />
+      {!compact && "Receiptd"}
+    </a>
+  );
+}
+
 export function BlastRadiusSimulator() {
   const [signerCtx, setSignerCtx] = useState<CryptoSignerContext | null>(null);
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>("poisoned-pr");
@@ -524,7 +541,7 @@ policies:
                 </>
               )}
             </div>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-4 flex flex-wrap items-center gap-2">
               <button type="button" onClick={verifyActiveReceipt} disabled={!activeReceipt || isTampered}
                 className="min-h-11 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50">
                 Verify receipt
@@ -533,6 +550,7 @@ policies:
                 className="min-h-11 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-100 disabled:opacity-50">
                 {isTampered ? "Restore original" : "Change one byte"}
               </button>
+              <div className="ml-auto"><ReceiptdMark compact /></div>
             </div>
             {isTampered && activeReceipt && (
               <p className="mt-3 text-sm text-slate-600">The payload’s first byte changed from <code>{'{'}</code> to <code>[</code>. The stored hash and signature are unchanged.</p>
@@ -802,9 +820,12 @@ policies:
           {activeReceipt && (
             <div className="p-4 rounded-xl border border-slate-200/80 bg-[#f8fafc] space-y-3 font-mono text-xs">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-[#667085] uppercase text-[10px] tracking-wider">
-                  Cryptographic Execution Receipt
-                </span>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span className="text-[#667085] uppercase text-[10px] tracking-wider">
+                    Cryptographic Execution Receipt
+                  </span>
+                  <ReceiptdMark />
+                </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => setShowYamlModal(true)}

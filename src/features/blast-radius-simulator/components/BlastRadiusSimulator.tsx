@@ -31,7 +31,7 @@ import {
   X,
 } from "lucide-react";
 
-function ReceiptdMark({ compact = false }: { compact?: boolean }) {
+function ReceiptdMark() {
   return (
     <a
       href="https://auditgpt.ai/receiptd"
@@ -43,7 +43,7 @@ function ReceiptdMark({ compact = false }: { compact?: boolean }) {
         className="block h-6 w-5 rounded-sm bg-[#101415] bg-no-repeat"
         style={{ backgroundImage: "url(/receiptd-banner.png)", backgroundSize: "112px auto", backgroundPosition: "-21px -6px" }}
       />
-      {!compact && "Receiptd"}
+      Receiptd
     </a>
   );
 }
@@ -550,7 +550,6 @@ policies:
                 className="min-h-11 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-100 disabled:opacity-50">
                 {isTampered ? "Restore original" : "Change one byte"}
               </button>
-              <div className="ml-auto"><ReceiptdMark compact /></div>
             </div>
             {isTampered && activeReceipt && (
               <p className="mt-3 text-sm text-slate-600">The payload’s first byte changed from <code>{'{'}</code> to <code>[</code>. The stored hash and signature are unchanged.</p>
@@ -564,12 +563,12 @@ policies:
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-white/80 backdrop-blur-xs px-4 py-2 font-mono text-xs shadow-2xs">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
             <span className="text-[10px] uppercase tracking-wider text-[#667085] font-semibold whitespace-nowrap shrink-0">
-              Target Environment:
+              Simulation preset:
             </span>
             <div className="flex flex-wrap items-center gap-1 p-0.5 rounded-xl border border-slate-200/80 bg-slate-50 text-[11px]">
               {(
                 [
-                  { id: "DECENTRALIZED_NODE", label: "Decentralized Node" },
+                  { id: "DECENTRALIZED_NODE", label: "Browser simulation" },
                   { id: "BYOK_CLOUD", label: "BYOK (Zero-Egress)" },
                   { id: "LOCAL_VPC", label: "Local / CI Runner" },
                 ] as const

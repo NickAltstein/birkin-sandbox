@@ -16,8 +16,8 @@ export const EXPLOIT_SCENARIOS: ExploitScenario[] = [
     title: "Indirect Prompt Injection via Poisoned PR",
     cveStyleTag: "MCP-EXFIL-01",
     description:
-      "Coding agent reads an open GitHub issue with hidden prompt injection coercing a curl exfiltration of local .env credentials.",
-    estimatedDamage: "Full Cloud Root Compromise",
+      "Coding agent reads an incoming pull request diff with hidden prompt injection coercing a curl exfiltration of local .env credentials.",
+    estimatedDamage: "Credential exfiltration from .env",
     targetEnvironment: "Local Developer Machine / CI Runner",
     steps: [
       {
@@ -57,7 +57,7 @@ export const EXPLOIT_SCENARIOS: ExploitScenario[] = [
     cveStyleTag: "MCP-MUTATE-02",
     description:
       "Autonomous SRE triage agent attempts to resolve a foreign-key deadlock by executing a destructive DROP TABLE CASCADE on production.",
-    estimatedDamage: "Irreversible Production Data Loss",
+    estimatedDamage: "Production table drop",
     targetEnvironment: "AWS RDS PostgreSQL (Production)",
     steps: [
       {
@@ -88,7 +88,7 @@ export const EXPLOIT_SCENARIOS: ExploitScenario[] = [
     cveStyleTag: "MCP-LOOP-03",
     description:
       "Orchestrator hits rate limits on search tool and enters recursive subagent spawn loop with unbounded retry ceilings.",
-    estimatedDamage: "$5,000+ API Token Exhaustion",
+    estimatedDamage: "Runaway token spend",
     targetEnvironment: "Kubernetes Agent Cluster / Modal",
     steps: [
       {

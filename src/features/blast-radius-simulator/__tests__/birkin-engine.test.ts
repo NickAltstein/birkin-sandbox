@@ -7,12 +7,13 @@ import {
   signPayloadHash,
   verifyReceiptIntegrity,
   evaluateAndSignMCPCall,
+  formatLatency,
   DEFAULT_POLICIES,
   type MCPToolCall,
 } from "../lib/birkin-engine";
 
 describe("Birkin Deterministic Crypto Engine & Policy Firewall", () => {
-  test("RFC-8785: Canonicalizes JSON with deterministic key sorting", () => {
+  test("Canonical JSON: deterministic key sorting", () => {
     const objA = { z: 1, a: 2, m: { nested_b: "foo", nested_a: "bar" } };
     const objB = { m: { nested_a: "bar", nested_b: "foo" }, a: 2, z: 1 };
 
@@ -23,7 +24,7 @@ describe("Birkin Deterministic Crypto Engine & Policy Firewall", () => {
     expect(canonA).toBe('{"a":2,"m":{"nested_a":"bar","nested_b":"foo"},"z":1}');
   });
 
-  test("RFC-8785: Canonicalizes arrays and primitive types deterministically", () => {
+  test("Canonical JSON: arrays and primitive types are deterministic", () => {
     expect(canonicalizeJson(null)).toBe("null");
     expect(canonicalizeJson(123)).toBe("123");
     expect(canonicalizeJson("test")).toBe('"test"');
@@ -160,5 +161,16 @@ describe("Birkin Deterministic Crypto Engine & Policy Firewall", () => {
     expect(receipt.decision).toBe("ALLOWED_VERIFIED");
     expect(receipt.blastRadiusScore).toBe(10);
     expect(receipt.matchedRules.length).toBe(0);
+    expect(receipt.latencyMs).toBeGreaterThan(0);
+  });
+
+  test("Latency formatting: handles sub-0.01ms, measured floats, and idle", () => {
+    expect(formatLatency(null)).toBe("—");
+    expect(formatLatency(undefined)).toBe("—");
+    expect(formatLatency(0)).toBe("<0.01ms");
+    expect(formatLatency(0.004)).toBe("<0.01ms");
+    expect(formatLatency(0.01)).toBe("0.01ms");
+    expect(formatLatency(0.123)).toBe("0.12ms");
+    expect(formatLatency(1.4)).toBe("1.40ms");
   });
 });

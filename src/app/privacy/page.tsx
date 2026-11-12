@@ -8,28 +8,28 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-[#0B0D11] text-slate-300 font-sans px-6 py-12">
-      <div className="max-w-3xl mx-auto space-y-8">
-        <div className="border-b border-[#222733] pb-6 flex items-center justify-between">
+    <div className="min-h-screen bg-[#ebeff5] text-[#242426] font-sans px-6 py-12">
+      <div className="max-w-3xl mx-auto space-y-8 bg-white p-8 sm:p-10 rounded-[1.25rem] border border-[rgba(36,36,38,0.08)] shadow-xs">
+        <div className="border-b border-slate-200/80 pb-6 flex items-center justify-between">
           <Link
             href="/"
-            className="font-mono text-xs text-[#38BDF8] hover:underline flex items-center gap-1.5"
+            className="font-mono text-xs text-[#58718a] hover:underline flex items-center gap-1.5"
           >
             &larr; Back to AuditGPT Sandbox
           </Link>
-          <span className="font-mono text-xs text-slate-500">Legal / Privacy</span>
+          <span className="font-mono text-xs text-[#667085]">Legal / Privacy</span>
         </div>
 
         <div className="space-y-2">
-          <h1 className="font-serif text-3xl sm:text-4xl text-white font-normal">
+          <h1 className="font-sans text-3xl sm:text-4xl text-[#111827] font-extrabold tracking-[-0.025em]">
             AuditGPT Privacy Policy
           </h1>
-          <p className="font-mono text-xs text-slate-500">
+          <p className="font-mono text-xs text-[#667085]">
             Last Updated: November 10, 2026 &bull; Effective Date: November 10, 2026
           </p>
         </div>
 
-        <div className="prose prose-invert prose-slate text-sm leading-relaxed space-y-6">
+        <div className="prose prose-slate text-sm leading-relaxed space-y-6 text-[#242426]">
           <p>
             AuditGPT Inc. (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how we handle information when you use our website (<code className="text-sky-300 font-mono text-xs">auditgpt.ai</code>), CLI tools, and GitHub integrations.
           </p>

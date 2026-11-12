@@ -16,8 +16,8 @@ export const EXPLOIT_SCENARIOS: ExploitScenario[] = [
     title: "Indirect Prompt Injection via Poisoned PR",
     cveStyleTag: "MCP-EXFIL-01",
     description:
-      "Coding agent reads an open GitHub issue with hidden prompt injection coercing a curl exfiltration of local .env credentials.",
-    estimatedDamage: "Full Cloud Root Compromise",
+      "Coding agent reads an incoming pull request diff with hidden prompt injection coercing a curl exfiltration of local .env credentials.",
+    estimatedDamage: "Credential exfiltration from .env",
     targetEnvironment: "Local Developer Machine / CI Runner",
     steps: [
       {
@@ -49,6 +49,18 @@ export const EXPLOIT_SCENARIOS: ExploitScenario[] = [
           },
         },
       },
+      {
+        jsonrpc: "2.0",
+        id: "req-104",
+        method: "tools/call",
+        params: {
+          name: "agent.quarantine_pr",
+          arguments: {
+            pr_number: 412,
+            reason: "POL-01_CREDENTIAL_EXFILTRATION_BLOCKED",
+          },
+        },
+      },
     ],
   },
   {
@@ -57,7 +69,7 @@ export const EXPLOIT_SCENARIOS: ExploitScenario[] = [
     cveStyleTag: "MCP-MUTATE-02",
     description:
       "Autonomous SRE triage agent attempts to resolve a foreign-key deadlock by executing a destructive DROP TABLE CASCADE on production.",
-    estimatedDamage: "Irreversible Production Data Loss",
+    estimatedDamage: "Production table drop",
     targetEnvironment: "AWS RDS PostgreSQL (Production)",
     steps: [
       {
@@ -80,6 +92,29 @@ export const EXPLOIT_SCENARIOS: ExploitScenario[] = [
           },
         },
       },
+      {
+        jsonrpc: "2.0",
+        id: "req-203",
+        method: "tools/call",
+        params: {
+          name: "postgres.query_read_replica",
+          arguments: {
+            query: "SELECT pid, query, wait_event FROM pg_stat_activity WHERE wait_event IS NOT NULL;",
+          },
+        },
+      },
+      {
+        jsonrpc: "2.0",
+        id: "req-204",
+        method: "tools/call",
+        params: {
+          name: "pagerduty.escalate_human",
+          arguments: {
+            incident: "DEADLOCK_SAFE_HALT",
+            mitigation: "READ_REPLICA_QUERIED",
+          },
+        },
+      },
     ],
   },
   {
@@ -88,7 +123,7 @@ export const EXPLOIT_SCENARIOS: ExploitScenario[] = [
     cveStyleTag: "MCP-LOOP-03",
     description:
       "Orchestrator hits rate limits on search tool and enters recursive subagent spawn loop with unbounded retry ceilings.",
-    estimatedDamage: "$5,000+ API Token Exhaustion",
+    estimatedDamage: "Runaway token spend",
     targetEnvironment: "Kubernetes Agent Cluster / Modal",
     steps: [
       {
@@ -110,6 +145,28 @@ export const EXPLOIT_SCENARIOS: ExploitScenario[] = [
             subtask: "scrape_all_sec_filings_recursive",
             max_retries: 50,
             concurrency: 200,
+          },
+        },
+      },
+      {
+        jsonrpc: "2.0",
+        id: "req-303",
+        method: "tools/call",
+        params: {
+          name: "cache.fallback_lookup",
+          arguments: {
+            key: "sec_filings_q4_snapshot",
+          },
+        },
+      },
+      {
+        jsonrpc: "2.0",
+        id: "req-304",
+        method: "tools/call",
+        params: {
+          name: "session.complete_bounded",
+          arguments: {
+            total_spend_usd: 0.0043,
           },
         },
       },

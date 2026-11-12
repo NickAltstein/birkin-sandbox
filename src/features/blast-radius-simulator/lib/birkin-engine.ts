@@ -75,7 +75,7 @@ export const DEFAULT_POLICIES: PolicyRule[] = [
   },
 ];
 
-// 1. RFC-8785 JCS-style deterministic key sorting
+// 1. Canonical JSON: deterministic key sorting (not full RFC 8785)
 export function canonicalizeJson(value: unknown): string {
   if (value === null || typeof value !== "object") {
     return JSON.stringify(value);
@@ -251,7 +251,7 @@ export async function evaluateAndSignMCPCall(
 
   const decision = blocked ? "BLOCKED_FAIL_CLOSED" : "ALLOWED_VERIFIED";
   
-  // RFC-8785 canonical deterministic serialization
+  // Canonical JSON (sorted keys) serialization
   const canonicalPayload = canonicalizeJson({
     decision,
     matchedRules,
@@ -263,7 +263,8 @@ export async function evaluateAndSignMCPCall(
   const payloadSha256 = await sha256Hex(canonicalPayload);
   const merkleRoot = await computeMerkleRoot([...priorLeafHashes, payloadSha256]);
   const ed25519SignatureHex = await signPayloadHash(ctx, payloadSha256);
-  const latencyMs = Number((performance.now() - t0).toFixed(2));
+  const elapsed = performance.now() - t0;
+  const latencyMs = Number(elapsed.toFixed(3));
 
   return {
     stepIndex,
@@ -281,4 +282,9 @@ export async function evaluateAndSignMCPCall(
     publicKeyHex: ctx.publicKeyHex,
     signingScheme: ctx.scheme,
   };
+}
+
+export function formatLatency(latencyMs?: number | null): string {
+  if (latencyMs === null || latencyMs === undefined) return "—";
+  return latencyMs < 0.01 ? "<0.01ms" : `${latencyMs.toFixed(2)}ms`;
 }

@@ -14,7 +14,7 @@ const fragmentMono = Fragment_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AuditGPT — Cryptographic Proof for Every Autonomous Tool Call",
+  title: "AuditGPT Sandbox — Browser-Side Policy Simulation for Hooked Tool Calls",
   description:
     "Deterministic fail-closed PreToolUse runtime hooks, Ed25519 execution receipts, and pre-merge CI blast-radius gating for autonomous AI agents.",
 };

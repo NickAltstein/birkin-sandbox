@@ -454,7 +454,6 @@ policies:
               Receiptd policy simulation
             </span>
           </div>
-
           {/* Right Links & Exploit Deep-Link */}
           <div className="flex items-center gap-2.5 sm:gap-3 font-mono text-xs text-[#667085] whitespace-nowrap shrink-0">
             <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 whitespace-nowrap shrink-0">

@@ -158,7 +158,7 @@ describe("Birkin Deterministic Crypto Engine & Policy Firewall", () => {
       ctx
     );
 
-    expect(receipt.decision).toBe("ALLOWED_VERIFIED");
+    expect(receipt.decision).toBe("ALLOWED");
     expect(receipt.blastRadiusScore).toBe(10);
     expect(receipt.matchedRules.length).toBe(0);
     expect(receipt.latencyMs).toBeGreaterThan(0);

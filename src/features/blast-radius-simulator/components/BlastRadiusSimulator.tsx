@@ -454,7 +454,6 @@ policies:
               Receiptd policy simulation
             </span>
           </div>
-
           {/* Right Links & Exploit Deep-Link */}
           <div className="flex items-center gap-2.5 sm:gap-3 font-mono text-xs text-[#667085] whitespace-nowrap shrink-0">
             <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-50 border border-slate-200/80 whitespace-nowrap shrink-0">
@@ -699,7 +698,7 @@ policies:
           </div>
 
           <div className="p-3.5 rounded-xl border border-slate-200/80 bg-[#f8fafc] font-mono text-[11px] text-[#475467] leading-relaxed">
-            <span className="text-[#111827] font-semibold">Live Experiment:</span> Uncheck a policy gate above to watch the agent bypass the firewall and transition into green <span className="text-[#16a34a] font-semibold">ALLOWED_VERIFIED</span> state.
+            <span className="text-[#111827] font-semibold">Live Experiment:</span> Uncheck a policy gate above to watch the agent bypass the gate and transition into green <span className="text-[#16a34a] font-semibold">ALLOWED</span> state.
           </div>
         </section>
 
@@ -1010,13 +1009,13 @@ policies:
           {/* Local CLI Quickstart Card */}
           <div className="p-3.5 rounded-xl border border-slate-200/80 bg-[#f8fafc] font-mono text-xs space-y-1.5">
             <div className="text-[10px] text-[#667085] uppercase tracking-wider">
-              Wrap Any Agent In 1 Command
+              Gate Claude Code tool calls in one command
             </div>
             <div className="text-[#242426] text-[11px] select-all bg-white p-2 rounded-lg border border-slate-200/80">
-              $ pip install git+https://github.com/NickAltstein/receiptd &amp;&amp; receiptd init --claude-code
+              $ pip install receiptd &amp;&amp; receiptd init --claude-code
             </div>
             <div className="text-[10px] text-[#16a34a] font-mono flex items-center gap-1 pt-0.5 font-medium">
-              <span>✓ 100% Local Execution • Zero Data Egress • Open Source (MIT)</span>
+              <span>Sample tool calls stay in your browser • Open Source (MIT)</span>
             </div>
           </div>
         </section>
@@ -1042,7 +1041,7 @@ policies:
             <a href="/privacy" className="hover:text-[#111827] transition-colors">
               Privacy Policy
             </a>
-            <span className="text-[#16a34a]">Local-First · Zero Data Egress</span>
+            <span className="text-[#16a34a]">Sample tool calls stay in your browser</span>
           </div>
         </div>
       </footer>

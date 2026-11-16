@@ -34,7 +34,7 @@ export interface ExecutionReceipt {
   mcpRequest: MCPToolCall;
   blastRadiusScore: number;
   matchedRules: string[];
-  decision: "BLOCKED_FAIL_CLOSED" | "ALLOWED_VERIFIED";
+  decision: "BLOCKED_FAIL_CLOSED" | "ALLOWED";
   canonicalPayload: string;
   payloadSha256: string;
   prevReceiptHash: string;
@@ -249,7 +249,7 @@ export async function evaluateAndSignMCPCall(
     }
   }
 
-  const decision = blocked ? "BLOCKED_FAIL_CLOSED" : "ALLOWED_VERIFIED";
+  const decision = blocked ? "BLOCKED_FAIL_CLOSED" : "ALLOWED";
   
   // Canonical JSON (sorted keys) serialization
   const canonicalPayload = canonicalizeJson({
